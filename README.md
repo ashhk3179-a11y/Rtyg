@@ -211,3 +211,90 @@ Requirements:
 
 Final Rule:
 Do not modify or break any existing functionality. Only add the Inventory module and integrate it with the existing backend APIs.
+
+
+The Product module is already working correctly. Do NOT modify or break any existing functionality.
+
+Add a new feature called "Download Template".
+
+Requirements:
+
+1. Add a new button beside the "Import Excel" button named:
+   • Download Template
+
+2. When the user clicks "Download Template", automatically download an Excel file named:
+
+   Product_Template.xlsx
+
+3. Generate the Excel file on the frontend using the xlsx library.
+
+4. The template must contain these column headers exactly:
+
+- ProductCode
+- Name
+- Description
+- Category
+- Quantity
+- Status
+- QRCode
+
+5. Include one sample row:
+
+ProductCode : PRD001
+Name : Motor
+Description : AC Motor
+Category : Electrical
+Quantity : 100
+Status : Active
+QRCode : QR001
+
+6. Leave all remaining rows empty so employees can enter multiple products.
+
+7. The downloaded template must be 100% compatible with the existing Import Excel feature. Employees should be able to fill the template and upload it without changing any column names.
+
+8. Add a small information card directly below the action buttons with the following instructions:
+
+-----------------------------------------------------
+📄 Excel Import Instructions
+
+1. Click "Download Template".
+2. Fill the Excel sheet using the provided column format.
+3. Do NOT rename, delete, or reorder the column headers.
+4. Save the Excel file as .xlsx.
+5. Click "Import Excel" and select the completed file.
+6. The system will validate and import all valid products into the database.
+-----------------------------------------------------
+
+9. Add an information icon (ℹ️) or Bootstrap alert box so the instructions are clearly visible but do not take up too much space.
+
+10. If possible, display the supported format below the instructions:
+
+Supported Format:
+✔ .xlsx
+✔ .xls
+
+11. Do not call any backend API for downloading the template.
+
+12. Do not modify:
+- Login
+- Authentication
+- JWT
+- Dashboard
+- Inventory
+- Sidebar
+- Navbar
+- Existing Product CRUD functionality
+- Existing Import Excel functionality
+- Backend APIs
+- SQL Server
+- Entity Framework models
+
+13. Keep the current UI theme and Bootstrap design consistent with the rest of the application.
+
+Final Goal:
+Employees should be able to:
+• Download the official Product Excel template.
+• Read the import instructions.
+• Fill the template correctly.
+• Upload it using the existing Import Excel feature.
+• Import products successfully without any changes to the backend or existing Product module.
