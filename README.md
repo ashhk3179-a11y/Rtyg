@@ -105,3 +105,77 @@ Important:
 - Use the existing Product APIs.
 - Keep the code clean and reusable.
 - Ensure all product data entered manually or imported from Excel is stored in SQL Server and immediately displayed in the Product table.
+Continue developing my WIP Management Monitor project.
+
+Tech Stack:
+- React + Vite + Bootstrap
+- ASP.NET Core Web API
+- SQL Server
+- Entity Framework Core
+- JWT Authentication
+
+The Product module is complete and fully integrated with the backend.
+
+Now implement the WIP Inventory module.
+
+Requirements:
+
+1. Create a new page named "WIP Inventory".
+
+2. Display dashboard cards:
+   - Total WIP Items
+   - In Progress
+   - Completed
+   - On Hold
+
+3. Add a searchable and filterable table with these columns:
+   - WIP ID
+   - Product Code
+   - Product Name
+   - Warehouse
+   - Location
+   - Quantity
+   - Current Stage
+   - Assigned Employee
+   - Last Updated
+   - Status
+   - Actions
+
+4. Add an "Add WIP Item" button that opens a Bootstrap modal.
+
+5. The Add WIP modal should contain:
+   - Product (dropdown populated from Products API)
+   - Warehouse
+   - Storage Location
+   - Quantity
+   - Current Stage
+   - Assigned Employee
+   - Status (In Progress, Completed, On Hold)
+   - Remarks
+
+6. On Save:
+   - Validate all required fields.
+   - Call the existing backend API (or prepare the frontend to consume the upcoming API if it does not yet exist).
+   - Refresh the WIP Inventory table without reloading the page.
+   - Show a success notification.
+
+7. Implement Edit and Delete functionality using modals and confirmation dialogs.
+
+8. Add search by:
+   - Product Code
+   - Product Name
+   - Warehouse
+   - Status
+
+9. Add filters:
+   - Warehouse
+   - Current Stage
+   - Status
+
+10. Add pagination and sorting.
+
+11. Use responsive Bootstrap cards and tables with a professional manufacturing ERP design.
+
+12. Use Axios, React Hooks, reusable components, loading indicators, proper error handling, and clean code.
+
+Do not modify the authentication or Product module. Build the WIP Inventory module so it integrates seamlessly with the existing project and follows the same UI/UX style.
