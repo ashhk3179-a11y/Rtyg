@@ -179,3 +179,101 @@ Requirements:
 12. Use Axios, React Hooks, reusable components, loading indicators, proper error handling, and clean code.
 
 Do not modify the authentication or Product module. Build the WIP Inventory module so it integrates seamlessly with the existing project and follows the same UI/UX style.
+
+
+Continue developing the WIP Inventory module using my existing backend APIs.
+
+Backend is already completed.
+
+Available Inventory APIs:
+
+POST /api/Inventory
+GET /api/Inventory
+GET /api/Inventory/{id}
+PUT /api/Inventory/{id}
+DELETE /api/Inventory/{id}
+POST /api/Inventory/checkin
+POST /api/Inventory/checkout
+
+Current Inventory model contains:
+
+- WipInventoryId
+- ProductId
+- RackId
+- Quantity
+- LastUpdated
+- IsDeleted
+
+Product and Rack are foreign key relationships.
+
+Requirements:
+
+1. Create a professional WIP Inventory page.
+
+2. At the top display dashboard cards:
+- Total Inventory
+- Total Quantity
+- Total Check-ins
+- Total Check-outs
+
+3. Top toolbar should contain:
+- Search box
+- Product filter
+- Rack filter
+- Refresh button
+- Add Inventory button
+
+4. Clicking "Add Inventory" opens a Bootstrap modal.
+
+Modal fields:
+- Product (dropdown populated from Product API)
+- Rack (dropdown populated from Rack API)
+- Quantity
+
+LastUpdated should not be entered manually. It should be automatically handled by the backend.
+
+5. Save should call POST /api/Inventory.
+
+6. Inventory table columns:
+
+- Inventory ID
+- Product Code
+- Product Name
+- Rack Name
+- Quantity
+- Last Updated
+- Actions
+
+7. Actions:
+- Edit
+- Delete
+- Check In
+- Check Out
+
+8. Edit should use PUT /api/Inventory/{id}.
+
+9. Delete should use DELETE /api/Inventory/{id} after confirmation.
+
+10. Check In:
+Open a modal asking for quantity.
+Call POST /api/Inventory/checkin.
+Refresh the table automatically.
+
+11. Check Out:
+Open a modal asking for quantity.
+Call POST /api/Inventory/checkout.
+Refresh the table automatically.
+
+12. Implement:
+- Search
+- Pagination
+- Sorting
+- Loading spinner
+- Toast notifications
+- Error handling
+
+13. Use Axios and React Hooks.
+
+14. Keep the same dashboard theme as the Product module.
+
+15. Do not modify backend APIs or database schema.
