@@ -1,64 +1,349 @@
-The Inventory Create API is returning HTTP 400.
+Implement the following workflow without breaking Login, JWT Authentication, Products, Employees, Dashboard, Inventory, Racks or existing APIs.
 
-Do NOT modify Login, Products, Employees, Racks, Authentication, Dashboard or any other module.
+Use the existing architecture (Repository, Service, Controller, DTOs).
 
-Only fix the Inventory frontend.
+=====================================
+1. INVENTORY PERMISSIONS
+=====================================
 
-Current backend DTO:
+Admin:
+- Full CRUD
+- Approve Checkout
+- View all requests
+- Receive notifications
 
-public class WipInventoryDto
-{
-    public int WipInventoryId { get; set; }
-    public int ProductId { get; set; }
-    public int RackId { get; set; }
-    public int Quantity { get; set; }
-    public DateTime LastUpdated { get; set; }
-}
+Employee:
+- Can View Inventory
+- Can Create Inventory
+- Cannot Delete Inventory
+- Cannot Edit Existing Inventory
+- Can Request Checkout
+- Cannot directly perform Checkout
 
-The backend is correct.
+Supervisor:
+- View Inventory
+- Check-In
+- View Requests
 
-Fix the React Inventory page so that the POST request matches the DTO exactly.
+=====================================
+2. INVENTORY CREATED BY EMPLOYEE
+=====================================
 
-Requirements:
+When an Employee creates Inventory:
 
-1. When creating a new inventory record send:
+- Save inventory successfully.
+- Store CreatedByEmployeeId.
+- Store CreatedDate.
+- Automatically create notification:
 
-{
-  "wipInventoryId": 0,
-  "productId": Number(selectedProductId),
-  "rackId": Number(selectedRackId),
-  "quantity": Number(quantity),
-  "lastUpdated": new Date().toISOString()
-}
+Title:
+New Inventory Created
 
-2. Never send:
-   - wipInventoryId: null
-   - productId as string
-   - rackId as string
+Message:
+Employee {EmployeeCode} created Inventory for Product {ProductCode} in Rack {RackCode}.
 
-3. Convert all numeric fields using Number().
+Recipient:
+Admin
 
-4. Make sure axios.post sends the DTO object directly:
+Status:
+Unread
 
-axios.post("/api/Inventory", dto)
+=====================================
+3. CHECK IN
+=====================================
 
-Do NOT wrap it like:
-{
-   dto: dto
-}
+Employee and Supervisor can perform Check-In directly.
 
-or
+Update:
 
-{
-   inventory: dto
-}
+Inventory Quantity
 
-5. Log the payload before sending using:
+Rack Occupied
 
-console.log(dto);
+LastUpdated
 
-6. After Save, refresh the Inventory table automatically.
+Create notification for Admin.
 
-7. Do not change backend code.
-Do not modify any API endpoint.
-Only fix the Inventory frontend request.
+=====================================
+4. CHECK OUT REQUEST
+=====================================
+
+Employee cannot checkout directly.
+
+Instead:
+
+Create CheckoutRequest table:
+
+CheckoutRequestId
+
+InventoryId
+
+EmployeeId
+
+Quantity
+
+Status
+(Pending, Approved, Rejected)
+
+RequestedDate
+
+ApprovedBy
+
+ApprovedDate
+
+Reason
+
+When employee clicks Checkout:
+
+DO NOT reduce inventory.
+
+Create Pending Request.
+
+Notify Admin.
+
+=====================================
+5. ADMIN APPROVAL
+=====================================
+
+Admin Dashboard should display Pending Requests.
+
+Admin can:
+
+Approve
+
+Reject
+
+If Approved:
+
+Reduce Inventory Quantity
+
+Update Rack Occupied
+
+Update LastUpdated
+
+Change Request Status = Approved
+
+Notify Employee
+
+If Rejected:
+
+Status = Rejected
+
+Notify Employee
+
+=====================================
+6. NOTIFICATION SYSTEM
+=====================================
+
+Notifications should work for both Admin and Employee.
+
+Unread Count
+
+Mark As Read
+
+Latest First
+
+Real-time refresh
+
+Notification Types:
+
+Inventory Created
+
+CheckIn
+
+Checkout Requested
+
+Checkout Approved
+
+Checkout Rejected
+
+=====================================
+7. FIX WIP PAGE
+=====================================
+
+Current issue:
+
+Loading production data
+404
+
+Find the incorrect API endpoint.
+
+Use the existing backend route.
+
+Do not return 404.
+
+Do not hardcode URLs.
+
+=====================================
+8. BACKWARD COMPATIBILITY
+=====================================
+
+Do not rename APIs.
+
+Do not break Swagger.
+
+Do not modify Login.
+
+Do not modify JWT.
+
+Do not modify Products.
+
+Do not remove existing Inventory endpoints.
+
+Only extend functionality.
+.
+.
+
+Update only the React frontend.
+
+Do not modify Login, JWT, Products, Dashboard or existing navigation.
+
+=====================================
+1. ROLE BASED UI
+=====================================
+
+Admin:
+
+Full Inventory Management
+
+Checkout Approval Page
+
+Notifications
+
+Employee:
+
+View Inventory
+
+Create Inventory
+
+Check-In
+
+Request Checkout
+
+Cannot Delete
+
+Cannot Edit
+
+Supervisor:
+
+View Inventory
+
+Check-In
+
+=====================================
+2. INVENTORY CREATE
+=====================================
+
+After Employee creates Inventory:
+
+Show success toast.
+
+Automatically refresh Inventory table.
+
+=====================================
+3. CHECKOUT
+=====================================
+
+Employee Checkout button should NOT reduce inventory.
+
+Instead:
+
+Open Request Dialog.
+
+Ask:
+
+Quantity
+
+Reason
+
+Submit Request
+
+Show:
+
+Request Submitted Successfully
+
+=====================================
+4. ADMIN REQUEST PAGE
+=====================================
+
+Create page:
+
+Checkout Requests
+
+Pending
+
+Approved
+
+Rejected
+
+Buttons:
+
+Approve
+
+Reject
+
+=====================================
+5. APPROVE
+=====================================
+
+After Approve:
+
+Refresh Inventory
+
+Refresh Notifications
+
+Refresh Dashboard
+
+=====================================
+6. NOTIFICATIONS
+=====================================
+
+Admin receives:
+
+Inventory Created
+
+Check-In
+
+Checkout Requested
+
+Employee receives:
+
+Checkout Approved
+
+Checkout Rejected
+
+Unread badge.
+
+Auto refresh every 30 seconds.
+
+=====================================
+7. FIX WIP PAGE
+=====================================
+
+Current error:
+
+Loading production data
+
+404
+
+Fix frontend API URL.
+
+Use correct backend endpoint.
+
+Show friendly message if no production exists.
+
+=====================================
+8. QUALITY
+=====================================
+
+No console errors.
+
+No 404 errors.
+
+No duplicate API calls.
+
+Use existing Axios instance.
+
+Do not modify Login.
+
+Do not break existing modules.
