@@ -1,94 +1,377 @@
-Continue from the previous implementation.
+Continue from the existing implementation.
 
-Do NOT rewrite or replace any existing code that has already been implemented.
+IMPORTANT
 
-Do NOT modify any working functionality.
+The backend is already working.
 
-Apply only the following changes.
+Do NOT rewrite existing modules.
 
-1. Update Role-Based Access
+Do NOT break any working functionality.
+
+Do NOT rename Controllers, Models, DTOs, Repositories, Services, Interfaces or API routes.
+
+Do NOT modify Login, JWT Authentication, Employee, Product, Inventory, Notification, Reports, Prediction, Warehouse or existing CRUD APIs unless explicitly required below.
+
+Do NOT modify Entity Framework relationships.
+
+Maintain full backward compatibility.
+
+==========================================================
+OBJECTIVE
+==========================================================
+
+Improve Rack and Inventory management using the existing project architecture.
+
+==========================================================
+DEFAULT RACK INITIALIZATION
+==========================================================
+
+When the application starts or when the first GET /api/Rack request is executed,
+
+check whether the Rack table contains any records.
+
+If no records exist,
+
+automatically create default Rack records.
+
+Create exactly these racks.
+
+RACK-A1
+Capacity = 100
+Occupied = 0
+
+RACK-A2
+Capacity = 100
+Occupied = 0
+
+RACK-A3
+Capacity = 100
+Occupied = 0
+
+RACK-B1
+Capacity = 100
+Occupied = 0
+
+RACK-B2
+Capacity = 100
+Occupied = 0
+
+RACK-B3
+Capacity = 100
+Occupied = 0
+
+RACK-C1
+Capacity = 100
+Occupied = 0
+
+RACK-C2
+Capacity = 100
+Occupied = 0
+
+RACK-C3
+Capacity = 100
+Occupied = 0
+
+Before inserting,
+
+check RackCode.
+
+Never create duplicate Rack records.
+
+Running the application multiple times must never insert duplicates.
+
+==========================================================
+RACK PAGE
+==========================================================
+
+GET /api/Rack should immediately return these records.
+
+Frontend should never display
+
+"No Rack Data Available"
+
+after initialization.
+
+==========================================================
+PRODUCT CREATION
+==========================================================
+
+When a Product is created successfully,
+
+automatically create Inventory.
+
+The user should never create Inventory manually.
+
+==========================================================
+AUTOMATIC RACK ASSIGNMENT
+==========================================================
+
+When Inventory is created,
+
+find the first Rack that has available capacity.
+
+Automatically assign that Rack.
+
+Store the RackId inside WipInventory.
+
+==========================================================
+RACK OCCUPANCY
+==========================================================
+
+After assigning Inventory,
+
+update
+
+Occupied
+
+inside the selected Rack.
+
+Update LastUpdated.
+
+Save everything inside one database transaction.
+
+==========================================================
+NO DUPLICATES
+==========================================================
+
+If Inventory already exists for the Product,
+
+do NOT create another Inventory.
+
+If default racks already exist,
+
+do NOT recreate them.
+
+==========================================================
+NO AVAILABLE RACK
+==========================================================
+
+If every Rack is full,
+
+return a proper message.
+
+"No Rack Capacity Available."
+
+Do NOT crash.
+
+==========================================================
+PRODUCT DELETE
+==========================================================
+
+When a Product is deleted,
+
+handle Inventory consistently.
+
+Do not leave orphan Inventory records.
+
+Update Rack Occupied accordingly.
+
+==========================================================
+ENTITY FRAMEWORK
+==========================================================
+
+Reuse existing
+
+Repositories
+
+Services
+
+DTOs
+
+Entity Framework Models
+
+Do NOT change database schema.
+
+Do NOT create new tables.
+
+==========================================================
+ROLE PERMISSIONS
+==========================================================
 
 ADMIN
 
-- Full Access.
+Full Access
+
+Add Product
+
+Edit Product
+
+Delete Product
+
+Import Excel
+
+Download Template
+
+Manage Inventory
+
+Manage Warehouse
+
+Manage Rack
+
+Manage Employees
+
+Reports
+
+Notifications
+
+Approve Check-Out Requests
 
 SUPERVISOR
 
-- View Only.
-- Cannot Add/Edit/Delete Products.
+View Dashboard
+
+View Products
+
+View Inventory
+
+View Warehouse
+
+View Rack
+
+View Notifications
+
+Cannot
+
+Add Product
+
+Edit Product
+
+Delete Product
+
+Approve Requests
+
+Manage Employees
 
 EMPLOYEE
 
-- Can View Products.
-- Can Add Products.
-- Can Edit Products.
-- Cannot Delete Products.
-- Can Perform Check-In.
-- Can Submit Check-Out Requests.
-- Can View Own Notifications.
-- Can View Own Request History.
+Login
 
-2. Preserve existing JWT Authentication.
+Dashboard
 
-3. Preserve all existing APIs.
+View Products
 
-4. Preserve existing Notification module.
+Add Product
 
-5. Preserve existing Database.
+Edit Product
 
-6. Do NOT rename Controllers, DTOs, Models or API routes.
+View Inventory
 
-Only extend the existing RBAC implementation without breaking compatibility.
+Check-In
 
-.
+Submit Check-Out Request
 
+View Own Notifications
 
-Continue from the previous frontend implementation.
+View Own Request History
 
-Do NOT rewrite any completed work.
+Cannot
 
-Do NOT modify any working functionality.
+Delete Product
 
-Apply only the following improvements.
+Delete Inventory
 
-1. Profile Dropdown
+Manage Warehouse
 
-Add
+Manage Rack
 
-- My Profile
-- Logout
+Manage Employees
 
-Logout should
+Reports
 
-- Clear JWT
-- Clear User Session
-- Redirect to Login
+Prediction
 
-2. Product Page Permissions
+Approve Requests
 
-ADMIN
+==========================================================
+NOTIFICATIONS
+==========================================================
 
-- Add
-- Edit
-- Delete
+Reuse existing Notification module.
 
-SUPERVISOR
+Do NOT create another Notification table.
 
-- View Only
+Use existing Notification APIs.
 
-EMPLOYEE
+==========================================================
+PRESERVE
+==========================================================
 
-- Add
-- Edit
+Do NOT modify
 
-Hide Delete button.
+JWT Authentication
 
-3. Keep Sidebar Role-Based.
+Login
 
-4. Keep Dashboard Role-Based.
+Notification APIs
 
-5. Preserve all existing Backend API integrations.
+Existing CRUD APIs
 
-6. Preserve all existing CRUD operations.
+Swagger
 
-Only implement the above changes.
+Database Relationships
+
+Repository Pattern
+
+Entity Framework Models
+
+Maintain full backward compatibility.
+
+==========================================================
+EXPECTED WORKFLOW
+==========================================================
+
+Application Starts
+
+↓
+
+Check Rack Table
+
+↓
+
+If Empty
+
+↓
+
+Automatically Create
+
+RACK-A1
+RACK-A2
+RACK-A3
+RACK-B1
+RACK-B2
+RACK-B3
+RACK-C1
+RACK-C2
+RACK-C3
+
+↓
+
+Admin/Employee Creates Product
+
+↓
+
+Inventory Automatically Created
+
+↓
+
+Available Rack Automatically Assigned
+
+↓
+
+Rack Occupied Updated
+
+↓
+
+Inventory Saved
+
+↓
+
+Frontend Immediately Displays Product + Inventory + Rack Information
+
+No manual Inventory creation required.
+
+No duplicate Rack records.
+
+No duplicate Inventory records.
+
+Everything must be saved in SQL Server using the existing architecture without breaking any existing functionality.
