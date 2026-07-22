@@ -1,81 +1,372 @@
-The backend is already working correctly.
+The WIP Management Frontend is already working.
 
-IMPORTANT:
+IMPORTANT - DO NOT BREAK ANY EXISTING FUNCTIONALITY
 
-1. Do NOT modify or break any existing functionality.
-2. Do NOT rename or delete existing Controllers, Models, DTOs, Services, Repositories, Interfaces, Entity Framework configurations, or API routes.
-3. Do NOT modify existing database tables or relationships.
-4. Do NOT modify Login, JWT Authentication, Product, Inventory, Warehouse, Rack, Employee, Prediction, Notification, or any existing CRUD functionality.
-5. Existing Swagger endpoints must continue working without changes.
-6. Only extend the existing authorization logic. Do not rewrite it.
+1. Do NOT modify any existing backend APIs.
+2. Do NOT modify database schema.
+3. Do NOT modify Login API.
+4. Do NOT modify JWT Authentication.
+5. Do NOT modify Product CRUD.
+6. Do NOT modify Inventory CRUD.
+7. Do NOT modify Import Excel.
+8. Do NOT modify Download Template.
+9. Do NOT modify Warehouse, Rack, Employee, Prediction backend.
+10. Do NOT rename routes, components or API endpoints.
+11. Do NOT remove any existing working functionality.
+12. Only fix the issues below while maintaining backward compatibility.
 
-OBJECTIVE
+==================================================
+OBJECTIVE 1
+FIX LOGGED-IN USER DETAILS
+==================================================
 
-Implement Role-Based Access Control (RBAC) using the existing JWT Authentication and Employee Role.
+Currently every logged-in user is displayed as "Admin".
 
-Use the existing role field (Admin, Supervisor, Employee). Do not create another role table unless one already exists.
+This is incorrect.
 
-ROLE PERMISSIONS
+Read the logged-in user's information from the existing JWT Token or Login API response.
+
+Display:
+
+Admin Login
+→ Admin
+
+Supervisor Login
+→ Supervisor
+
+Employee Login
+→ Employee
+
+Also display the logged-in Employee Name if available.
+
+Do NOT hardcode any values.
+
+==================================================
+OBJECTIVE 2
+ROLE BASED SIDEBAR
+==================================================
+
+Show menu items based on logged-in user's role.
 
 ADMIN
 
-- Full access to all modules.
-- Can Add, Edit, Delete Products.
-- Can Import Excel.
-- Can Download Template.
-- Can manage Inventory.
-- Can manage Warehouse and Rack.
-- Can manage Employees.
-- Can manage Notifications.
-- Can Approve and Reject Check-Out Requests.
-- Can view all reports.
-- Can access all APIs.
+Show
+
+Dashboard
+Products
+Employees
+WIP
+Inventory
+Check-In
+Check-Out
+Racks
+Reports
+Notifications
+Prediction
 
 SUPERVISOR
 
-- Can login.
-- Can view Dashboard.
-- Can view Products.
-- Can view Inventory.
-- Can view Warehouse.
-- Can view Rack.
-- Can view Employees.
-- Can view Notifications.
-- Cannot Add/Edit/Delete Products.
-- Cannot Delete Inventory.
-- Cannot Approve or Reject Requests.
-- Cannot manage Employees.
-- Cannot access Admin-only APIs.
+Show only
+
+Dashboard
+Products
+Inventory
+Check-In
+Check-Out
+Racks
+Notifications
+
+Hide
+
+Employees
+Reports
+Prediction
+Any Admin-only module
 
 EMPLOYEE
 
-- Can login.
-- Can view Dashboard.
-- Can view Products.
-- Can view Inventory.
-- Can perform Check-In.
-- Can submit Check-Out Requests.
-- Can view only their own Request History.
-- Can view only their own Notifications.
-- Cannot Add/Edit/Delete Products.
-- Cannot modify Inventory directly.
-- Cannot access Admin modules.
-- Cannot access Supervisor modules.
+Show only
 
-IMPLEMENTATION
+Dashboard
+Products
+Inventory
+Check-In
+Check-Out
+Notifications
 
-- Use ASP.NET Core Role-Based Authorization.
-- Protect APIs using [Authorize(Roles = "...")].
-- Do not implement role checking using hardcoded if/else statements throughout the code.
-- Reuse the existing JWT token and authentication middleware.
-- Ensure unauthorized users receive proper HTTP status codes:
-  - 401 Unauthorized (not logged in)
-  - 403 Forbidden (logged in but insufficient permissions)
+Hide
 
-COMPATIBILITY
+Employees
+Reports
+Prediction
+Rack Management
+WIP Management
+Admin Settings
 
-Do not break the existing frontend.
-Do not change API URLs.
-Do not change request or response models.
-Do not change Swagger configuration.
-Maintain backward compatibility with the current project.
+Do not simply disable menu items.
+
+Completely hide unauthorized menus.
+
+==================================================
+OBJECTIVE 3
+ROLE BASED DASHBOARD
+==================================================
+
+Dashboard cards must also change according to role.
+
+ADMIN
+
+Display all dashboard cards.
+
+SUPERVISOR
+
+Hide
+
+Employee Count
+Prediction
+Admin Statistics
+Reports related cards
+
+EMPLOYEE
+
+Display only
+
+Today's Check-In
+Today's Check-Out
+Current Inventory
+Own Pending Requests
+Own Approved Requests
+Own Notifications
+
+Hide every Admin dashboard card.
+
+==================================================
+OBJECTIVE 4
+PROTECT FRONTEND ROUTES
+==================================================
+
+Users should not access unauthorized pages by manually typing URLs.
+
+If Employee opens
+
+/employees
+/reports
+/predictions
+/racks-management
+
+Redirect to
+
+Unauthorized Page
+
+or
+
+Dashboard
+
+Do not allow unauthorized page rendering.
+
+==================================================
+OBJECTIVE 5
+FIX DASHBOARD REDIRECTION
+==================================================
+
+Currently clicking Dashboard redirects to Login.
+
+Fix this.
+
+Dashboard should always navigate correctly after successful login.
+
+Do not clear JWT token unnecessarily.
+
+Maintain logged-in session until Logout.
+
+==================================================
+OBJECTIVE 6
+FIX RACK PAGE
+==================================================
+
+Currently clicking Racks displays a blank page.
+
+Fix this.
+
+Requirements
+
+Show loading spinner.
+
+If data exists
+
+Display Rack Table.
+
+If no data
+
+Display
+
+"No Rack Data Available"
+
+If API fails
+
+Display proper Bootstrap error alert.
+
+Never render a blank screen.
+
+==================================================
+OBJECTIVE 7
+FIX PRODUCTION PAGE
+==================================================
+
+Currently Production page is blank.
+
+Apply the same behavior as Rack.
+
+Loading
+
+Empty State
+
+Error State
+
+Data Table
+
+Never display blank page.
+
+==================================================
+OBJECTIVE 8
+NOTIFICATION MODULE
+==================================================
+
+Reuse existing Notification APIs.
+
+Do NOT create new APIs.
+
+Admin
+
+View all notifications.
+
+Unread notification badge.
+
+Mark notification as Read.
+
+Notification history.
+
+Employee
+
+View only own notifications.
+
+View Check-Out Request Status.
+
+Supervisor
+
+View notifications related to assigned work.
+
+Notification badge should update automatically after refresh.
+
+==================================================
+OBJECTIVE 9
+BETTER NAVBAR
+==================================================
+
+Top Right should display
+
+Notification Bell
+
+Unread Count
+
+Logged-in Employee Name
+
+Role Badge
+
+Profile Dropdown
+
+Logout
+
+Example
+
+🔔 3
+
+Sriram
+
+Employee
+
+▼
+
+Logout
+
+==================================================
+OBJECTIVE 10
+BETTER USER EXPERIENCE
+==================================================
+
+Show loading spinner during API calls.
+
+Show Bootstrap Alerts for API errors.
+
+Show Toast Messages
+
+Login Successful
+
+Request Submitted
+
+Notification Read
+
+Profile Updated
+
+Request Approved
+
+Request Rejected
+
+Do not leave blank screens.
+
+==================================================
+OBJECTIVE 11
+PRESERVE EVERYTHING
+==================================================
+
+Do NOT modify
+
+Backend APIs
+
+Controllers
+
+Models
+
+DTOs
+
+Entity Framework
+
+JWT Authentication
+
+Database
+
+Existing CRUD
+
+Working Dashboard Cards
+
+Working Login
+
+Working Product Module
+
+Working Inventory Module
+
+Working Import Excel
+
+Working Download Template
+
+Notification Backend
+
+Only improve frontend.
+
+==================================================
+FINAL GOAL
+==================================================
+
+The application should behave like a real Manufacturing WIP Management System.
+
+Each role should see only the modules they are authorized to access.
+
+Unauthorized pages must never be accessible.
+
+Dashboard should never redirect to Login unexpectedly.
+
+Racks and Production pages must never show blank screens.
+
+Notifications should work using the existing backend APIs.
+
+The UI must remain responsive, modern, professional, and fully compatible with the existing backend without breaking any current functionality.
