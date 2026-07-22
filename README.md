@@ -400,3 +400,236 @@ Create Employee Notification
 Frontend displays updated status.
 
 Do not introduce breaking changes anywhere in the project.
+
+
+
+The WIP Management System frontend is already working correctly.
+
+IMPORTANT RULES:
+
+1. Do NOT modify Login.
+2. Do NOT modify Authentication or JWT handling.
+3. Do NOT modify Product module.
+4. Do NOT modify Inventory CRUD.
+5. Do NOT modify Dashboard.
+6. Do NOT modify Sidebar or Navbar design.
+7. Do NOT modify existing API endpoints.
+8. Do NOT change any backend code.
+9. Do NOT rename existing React components.
+10. Keep the existing Bootstrap UI consistent throughout the application.
+
+Objective:
+Implement a Notification and Check-Out Approval workflow using the existing backend APIs.
+
+---------------------------------------------------
+EMPLOYEE SIDE
+---------------------------------------------------
+
+1. Employees should still be able to view Inventory.
+
+2. Replace the direct Check-Out action with a "Request Check-Out" button.
+
+3. When clicked:
+   - Open a Bootstrap modal.
+   - Display:
+     • Product Name (Read Only)
+     • Available Quantity (Read Only)
+     • Requested Quantity
+     • Reason (Optional)
+     • Submit Button
+
+4. After submission:
+   - Call the existing backend API.
+   - Show:
+     "Check-Out Request Submitted Successfully."
+   - Display Status:
+     Pending Approval
+
+5. Do NOT reduce inventory on the frontend.
+
+6. Add a "My Requests" page.
+
+Display:
+
+---------------------------------------------------
+Product
+Quantity
+Date
+Status
+
+🟡 Pending
+🟢 Approved
+🔴 Rejected
+---------------------------------------------------
+
+The page should automatically fetch the employee's request history from the backend.
+
+---------------------------------------------------
+ADMIN SIDE
+---------------------------------------------------
+
+1. Add a Notification Bell icon in the Navbar.
+
+2. Display unread notification count as a red badge.
+
+Example:
+
+🔔 (5)
+
+3. Clicking the bell opens a dropdown showing the latest notifications.
+
+Each notification displays:
+
+• Employee Name
+• Product Name
+• Requested Quantity
+• Request Time
+• Status
+
+4. Add a "View All Notifications" button.
+
+---------------------------------------------------
+NOTIFICATION PAGE
+---------------------------------------------------
+
+Create a dedicated Notification page.
+
+Each notification card should display:
+
+Employee Name
+
+Product
+
+Requested Quantity
+
+Date & Time
+
+Status
+
+Buttons:
+
+✔ Approve
+
+✖ Reject
+
+---------------------------------------------------
+APPROVE
+---------------------------------------------------
+
+When Approve is clicked:
+
+• Call the existing backend Approve API.
+• Refresh the notification list.
+• Refresh Inventory.
+• Update request status to Approved.
+• Show Bootstrap success toast.
+
+---------------------------------------------------
+REJECT
+---------------------------------------------------
+
+When Reject is clicked:
+
+• Call existing Reject API.
+• Refresh Notification list.
+• Update request status to Rejected.
+• Show Bootstrap warning toast.
+
+---------------------------------------------------
+NOTIFICATION STATUS
+---------------------------------------------------
+
+Unread notifications:
+
+• Red left border
+• Bold text
+
+Read notifications:
+
+• Normal appearance
+
+Use the existing backend Read Notification API when the admin opens a notification.
+
+---------------------------------------------------
+UI REQUIREMENTS
+---------------------------------------------------
+
+Use Bootstrap Cards.
+
+Use Bootstrap Badges:
+
+Pending = Yellow
+
+Approved = Green
+
+Rejected = Red
+
+Use Bootstrap Toasts for success/error messages.
+
+Add loading spinners while fetching data.
+
+Display friendly empty states:
+
+"No Notifications Found"
+
+"No Pending Requests"
+
+---------------------------------------------------
+API INTEGRATION
+---------------------------------------------------
+
+Use ONLY the existing backend APIs.
+
+Do NOT create new endpoints.
+
+Use Axios with JWT Authorization headers.
+
+Use the existing Notification and Notifications APIs already available in Swagger.
+
+---------------------------------------------------
+FINAL GOAL
+---------------------------------------------------
+
+Employee:
+
+Inventory
+↓
+
+Request Check-Out
+↓
+
+Pending
+
+↓
+
+Wait for Approval
+
+↓
+
+View Status in My Requests
+
+---------------------------------------------------
+
+Admin:
+
+Notification Bell
+
+↓
+
+Notification Page
+
+↓
+
+Approve / Reject
+
+↓
+
+Database Updated
+
+↓
+
+Employee Status Updated
+
+---------------------------------------------------
+
+Do not modify any existing working modules. Integrate seamlessly with the current React application and Bootstrap design while preserving all existing functionality.
