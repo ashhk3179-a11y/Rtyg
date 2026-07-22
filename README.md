@@ -1,35 +1,64 @@
-The Inventory page is currently loading only Products but not Racks.
+The Inventory Create API is returning HTTP 400.
 
-Do NOT modify Login.
-Do NOT modify Authentication.
-Do NOT modify Product.
-Do NOT modify Inventory CRUD.
-Do NOT modify Backend APIs.
+Do NOT modify Login, Products, Employees, Racks, Authentication, Dashboard or any other module.
 
-Only fix the Inventory Add/Edit form.
+Only fix the Inventory frontend.
+
+Current backend DTO:
+
+public class WipInventoryDto
+{
+    public int WipInventoryId { get; set; }
+    public int ProductId { get; set; }
+    public int RackId { get; set; }
+    public int Quantity { get; set; }
+    public DateTime LastUpdated { get; set; }
+}
+
+The backend is correct.
+
+Fix the React Inventory page so that the POST request matches the DTO exactly.
 
 Requirements:
 
-1. On Inventory page load, call:
-   GET /api/Product
-   GET /api/Rack
+1. When creating a new inventory record send:
 
-2. Both API calls must include the existing JWT Bearer token.
+{
+  "wipInventoryId": 0,
+  "productId": Number(selectedProductId),
+  "rackId": Number(selectedRackId),
+  "quantity": Number(quantity),
+  "lastUpdated": new Date().toISOString()
+}
 
-3. Store products and racks in separate React state variables.
+2. Never send:
+   - wipInventoryId: null
+   - productId as string
+   - rackId as string
 
-4. The Product dropdown must display ProductCode or Product Name.
+3. Convert all numeric fields using Number().
 
-5. The Rack dropdown must display RackCode.
+4. Make sure axios.post sends the DTO object directly:
 
-6. The selected value must be RackId.
+axios.post("/api/Inventory", dto)
 
-7. If no racks exist, show "No racks available".
+Do NOT wrap it like:
+{
+   dto: dto
+}
 
-8. Refresh the rack list after creating a new rack.
+or
 
-9. Do not hardcode rack values.
+{
+   inventory: dto
+}
 
-10. Do not change backend, routes, DTOs, models or controllers.
+5. Log the payload before sending using:
 
-11. Verify in the browser Network tab that GET /api/Rack is called successfully before rendering the Inventory form.
+console.log(dto);
+
+6. After Save, refresh the Inventory table automatically.
+
+7. Do not change backend code.
+Do not modify any API endpoint.
+Only fix the Inventory frontend request.
