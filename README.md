@@ -1,372 +1,750 @@
-The WIP Management Frontend is already working.
+Perfect. Since you're using Visual Studio 2022 (not VS Code), follow these steps.
 
-IMPORTANT - DO NOT BREAK ANY EXISTING FUNCTIONALITY
+Step 1: Install Required Software
+Make sure you have:
 
-1. Do NOT modify any existing backend APIs.
-2. Do NOT modify database schema.
-3. Do NOT modify Login API.
-4. Do NOT modify JWT Authentication.
-5. Do NOT modify Product CRUD.
-6. Do NOT modify Inventory CRUD.
-7. Do NOT modify Import Excel.
-8. Do NOT modify Download Template.
-9. Do NOT modify Warehouse, Rack, Employee, Prediction backend.
-10. Do NOT rename routes, components or API endpoints.
-11. Do NOT remove any existing working functionality.
-12. Only fix the issues below while maintaining backward compatibility.
+✅ Visual Studio 2022
 
-==================================================
-OBJECTIVE 1
-FIX LOGGED-IN USER DETAILS
-==================================================
+✅ ASP.NET and web development workload installed
 
-Currently every logged-in user is displayed as "Admin".
+✅ Node.js (LTS)
 
-This is incorrect.
+Check Node installation by opening Developer PowerShell or Command Prompt:
 
-Read the logged-in user's information from the existing JWT Token or Login API response.
+node -v
+npm -v
+Step 2: Open Visual Studio 2022
+Go to:
 
-Display:
+File → New → Project
 
-Admin Login
-→ Admin
+Step 3: Select Project Template
+Search for:
 
-Supervisor Login
-→ Supervisor
+React
+Choose:
 
-Employee Login
-→ Employee
-
-Also display the logged-in Employee Name if available.
-
-Do NOT hardcode any values.
-
-==================================================
-OBJECTIVE 2
-ROLE BASED SIDEBAR
-==================================================
-
-Show menu items based on logged-in user's role.
-
-ADMIN
-
-Show
-
-Dashboard
-Products
-Employees
-WIP
-Inventory
-Check-In
-Check-Out
-Racks
-Reports
-Notifications
-Prediction
-
-SUPERVISOR
-
-Show only
-
-Dashboard
-Products
-Inventory
-Check-In
-Check-Out
-Racks
-Notifications
-
-Hide
-
-Employees
-Reports
-Prediction
-Any Admin-only module
-
-EMPLOYEE
-
-Show only
-
-Dashboard
-Products
-Inventory
-Check-In
-Check-Out
-Notifications
-
-Hide
-
-Employees
-Reports
-Prediction
-Rack Management
-WIP Management
-Admin Settings
-
-Do not simply disable menu items.
-
-Completely hide unauthorized menus.
-
-==================================================
-OBJECTIVE 3
-ROLE BASED DASHBOARD
-==================================================
-
-Dashboard cards must also change according to role.
-
-ADMIN
-
-Display all dashboard cards.
-
-SUPERVISOR
-
-Hide
-
-Employee Count
-Prediction
-Admin Statistics
-Reports related cards
-
-EMPLOYEE
-
-Display only
-
-Today's Check-In
-Today's Check-Out
-Current Inventory
-Own Pending Requests
-Own Approved Requests
-Own Notifications
-
-Hide every Admin dashboard card.
-
-==================================================
-OBJECTIVE 4
-PROTECT FRONTEND ROUTES
-==================================================
-
-Users should not access unauthorized pages by manually typing URLs.
-
-If Employee opens
-
-/employees
-/reports
-/predictions
-/racks-management
-
-Redirect to
-
-Unauthorized Page
+React and ASP.NET Core
 
 or
 
+React App
+
+Since you're building the frontend only, you can ignore the backend project for now if the template includes one.
+
+Click Next.
+
+Step 4: Configure Project
+Project Name:
+
+WIPManagementMonitor
+Location:
+
+Choose your project folder
+Click Next.
+
+Step 5: Framework
+Select:
+
+.NET 8 (or latest available)
+
+React
+
+TypeScript (recommended)
+
+Click Create.
+
+Visual Studio will create the project and install the required npm packages.
+
+Step 6: Project Structure
+Your project will look similar to this:
+
+WIPManagementMonitor
+│
+├── ClientApp
+│   ├── public
+│   ├── src
+│   ├── package.json
+│   └── ...
+│
+├── Controllers
+├── Program.cs
+└── ...
+Since you're only building the frontend, you'll mainly work inside the ClientApp folder.
+
+Step 7: Install Frontend Packages
+Open:
+
+View → Terminal
+
+Navigate to the React project (if needed):
+
+cd ClientApp
+Install the packages:
+
+npm install react-router-dom
+npm install react-icons
+npm install framer-motion
+npm install recharts
+npm install axios
+npm install zustand
+npm install react-hook-form
+If you're using Tailwind CSS, install and configure it according to the current Tailwind guide for React.
+
+Step 8: Create Folder Structure
+Inside ClientApp/src, create:
+
+src
+│
+├── assets
+├── components
+│   ├── Navbar
+│   ├── Sidebar
+│   ├── Cards
+│   ├── Charts
+│   ├── Tables
+│   └── Forms
+│
+├── pages
+│   ├── Login
+│   ├── Dashboard
+│   ├── Inventory
+│   ├── CheckIn
+│   ├── CheckOut
+│   ├── Tracking
+│   ├── SpaceMonitoring
+│   ├── Employee
+│   ├── ShiftAnalytics
+│   ├── Prediction
+│   ├── Reports
+│   └── Settings
+│
+├── layouts
+├── routes
+├── services
+├── data
+├── hooks
+├── store
+├── utils
+└── styles
+Step 9: Add Mock Data
+Create a data folder with files such as:
+
+products.json
+
+employees.json
+
+shiftData.json
+
+prediction.json
+
+notifications.json
+
+These will be used until your backend is ready.
+
+Step 10: Create the Pages
+Build them in this order:
+
+Login
+
 Dashboard
 
-Do not allow unauthorized page rendering.
+Inventory
 
-==================================================
-OBJECTIVE 5
-FIX DASHBOARD REDIRECTION
-==================================================
+Check-In
 
-Currently clicking Dashboard redirects to Login.
+Check-Out
 
-Fix this.
+Product Tracking
 
-Dashboard should always navigate correctly after successful login.
+Space Monitoring
 
-Do not clear JWT token unnecessarily.
+Employee Activity
 
-Maintain logged-in session until Logout.
+Shift Analytics
 
-==================================================
-OBJECTIVE 6
-FIX RACK PAGE
-==================================================
+Prediction
 
-Currently clicking Racks displays a blank page.
+Reports
 
-Fix this.
+Settings
 
-Requirements
+Step 11: Run the Application
+Press:
 
-Show loading spinner.
+F5 or click Start.
 
-If data exists
+Visual Studio will:
 
-Display Rack Table.
+Build the project.
 
-If no data
+Start the React development server.
 
-Display
+Open the app in your browser.
 
-"No Rack Data Available"
+If you're using the same Visual Studio solution as your .NET backend, an even better structure is:
+WIPManagementMonitor
+│
+├── WIPManagementMonitor.API      (.NET Web API)
+│
+├── WIPManagementMonitor.UI       (React Frontend)
+│
+└── WIPManagementMonitor.sln
+This keeps the frontend and backend separate but in the same solution, which is ideal for your WIP Management Monitor project.
 
-If API fails
+One question: Are you using Visual Studio 2022 Community, Professional, or Enterprise? Also, is your frontend React or Blazor?
 
-Display proper Bootstrap error alert.
 
-Never render a blank screen.
+Monday 11:39 AM
+How can I fix this
 
-==================================================
-OBJECTIVE 7
-FIX PRODUCTION PAGE
-==================================================
+From your screenshot, there are 2 issues. One is only a warning from ESLint, and the other is a NuGet security warning.
 
-Currently Production page is blank.
+1. ESLint Error: 'error' is defined but never used.
+In your code you have:
 
-Apply the same behavior as Rack.
+catch (error) {
+    alert("Invalid email or password. Please try again.");
+}
+You declared error but never used it.
 
-Loading
+Fix 1 (Recommended)
+Log the error:
 
-Empty State
+catch (error) {
+    console.error(error);
+    alert("Invalid email or password. Please try again.");
+}
+Fix 2
+If you don't need the error object:
 
-Error State
+catch {
+    alert("Invalid email or password. Please try again.");
+}
+This will remove the ESLint warning.
 
-Data Table
+2. NU1903 Warning (Microsoft.OpenApi)
+This is not stopping your project. It means the installed package has a known security vulnerability.
 
-Never display blank page.
+Update the package.
 
-==================================================
-OBJECTIVE 8
-NOTIFICATION MODULE
-==================================================
+In Visual Studio:
 
-Reuse existing Notification APIs.
+Right-click the Solution
 
-Do NOT create new APIs.
+Manage NuGet Packages for Solution
 
-Admin
+Go to Updates
 
-View all notifications.
+Update Microsoft.OpenApi to the latest version.
 
-Unread notification badge.
+Or run:
 
-Mark notification as Read.
+dotnet add package Microsoft.OpenApi
+Then restore packages.
 
-Notification history.
+3. Check if Login API is Running
+I noticed you're calling:
 
-Employee
+await axios.post("http://localhost:44321/api/Login", {
+    email,
+    password
+});
+Make sure:
 
-View only own notifications.
+Your .NET API is running.
 
-View Check-Out Request Status.
+The URL is correct.
 
-Supervisor
+The port (44321) matches the port shown in your backend's browser or launchSettings.json.
 
-View notifications related to assigned work.
+The endpoint actually exists:
 
-Notification badge should update automatically after refresh.
+[HttpPost("Login")]
+public IActionResult Login(LoginDto model)
+{
+    ...
+}
+4. If Login Still Doesn't Work
+Replace your catch block temporarily with:
 
-==================================================
-OBJECTIVE 9
-BETTER NAVBAR
-==================================================
+catch (error) {
+    console.error(error);
 
-Top Right should display
+    if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+    }
 
-Notification Bell
+    alert("Login failed.");
+}
+This will show the actual error in the browser's developer console (F12 → Console), making it much easier to diagnose.
 
-Unread Count
+I need one more screenshot to identify the exact problem:
+Please upload:
 
-Logged-in Employee Name
+The full Login.jsx file, and
 
-Role Badge
+The LoginController.cs (or the controller containing the Login API).
 
-Profile Dropdown
+With those, I can tell you the exact line that needs to be fixed.
+
+
+Today 10:19 AM
+I need to submit the document for this project that includes
+1. Purpose
+2. System Description
+3. Scope
+4. Current Process
+5. Proposed Solution
+6. Functional Requirements
+7. Technical Requirements
+8. Database Design
+9. API / Integration Details
+10. Reports & Dashboards
+11. Security Requirements
+12. Test Cases
+13. Assumptions & Dependencies
+14. Approvals
+
+Software Requirements Specification (SRS)
+WIP Management Monitor with QR Code Tracking and AI-Based Prediction
+Project Name: WIP Management Monitor
+
+Technology Stack:
+
+Frontend: React.js
+
+Backend: ASP.NET Core Web API
+
+Database: Microsoft SQL Server (SSMS)
+
+QR Code: QR Generator & QR Scanner
+
+AI Prediction: ML.NET / Python (Future Enhancement)
+
+1. Purpose
+The purpose of the WIP (Work In Progress) Management Monitor is to digitally monitor and manage products during the manufacturing process. The system uses QR codes to track product movement, maintain inventory, record employee activities, monitor warehouse space utilization, and analyze shift-wise production. It also provides predictive insights into future WIP requirements, enabling better production planning and inventory management.
+
+2. System Description
+The WIP Management Monitor is a web-based application designed for manufacturing industries. Every product is assigned a unique QR code that is scanned whenever the product enters or exits the WIP area.
+
+The system records:
+
+Product information
+
+Product location
+
+Quantity
+
+Storage space utilization
+
+Employee handling details
+
+Check-In and Check-Out timestamps
+
+Shift information
+
+The application provides real-time dashboards, inventory monitoring, employee tracking, reporting, and AI-based demand prediction.
+
+3. Scope
+The proposed system includes:
+
+QR Code-based product tracking
+
+WIP inventory monitoring
+
+Employee activity tracking
+
+Check-In and Check-Out management
+
+Warehouse space monitoring
+
+Shift-wise production monitoring
+
+Real-time dashboards
+
+Reports generation
+
+AI-based product requirement prediction
+
+Role-based access control
+
+Notification and alert system
+
+The system is intended for manufacturing companies to improve inventory visibility, traceability, and operational efficiency.
+
+4. Current Process
+Currently, many manufacturing companies track WIP manually using paper records or spreadsheets.
+
+Problems include:
+
+Manual data entry errors
+
+Difficulty locating products
+
+Lack of real-time inventory visibility
+
+Delays in identifying shortages
+
+No centralized employee activity records
+
+Inefficient warehouse space management
+
+Time-consuming report preparation
+
+No predictive analysis for future inventory requirements
+
+5. Proposed Solution
+The proposed solution introduces a digital WIP monitoring system using QR codes.
+
+Workflow:
+
+Generate a unique QR code for every product.
+
+Scan the QR code during Check-In.
+
+Store product details in the database.
+
+Update inventory automatically.
+
+Display live dashboard statistics.
+
+Scan the product during Check-Out.
+
+Track employee activities.
+
+Analyze shift-wise usage.
+
+Predict future inventory requirements.
+
+Generate reports and alerts.
+
+6. Functional Requirements
+User Management
+User Login
 
 Logout
 
-Example
+Role-based Access
 
-🔔 3
+Profile Management
 
-Sriram
+Product Management
+Add Product
 
-Employee
+Edit Product
 
-▼
+Delete Product
 
-Logout
+Search Product
 
-==================================================
-OBJECTIVE 10
-BETTER USER EXPERIENCE
-==================================================
+Product Categories
 
-Show loading spinner during API calls.
+QR Code Module
+Generate QR Code
 
-Show Bootstrap Alerts for API errors.
+Scan QR Code
 
-Show Toast Messages
+Validate QR Code
 
-Login Successful
+WIP Management
+Product Check-In
 
-Request Submitted
+Product Check-Out
 
-Notification Read
+Product Tracking
 
-Profile Updated
+Product History
 
-Request Approved
+Warehouse Management
+Rack Allocation
 
-Request Rejected
+Space Utilization
 
-Do not leave blank screens.
+Product Location Tracking
 
-==================================================
-OBJECTIVE 11
-PRESERVE EVERYTHING
-==================================================
+Employee Management
+Employee Registration
 
-Do NOT modify
+Employee Activity Log
 
-Backend APIs
+Shift Assignment
 
-Controllers
+Dashboard
+Total Products
 
-Models
+Current WIP Stock
 
-DTOs
+Low Stock Alerts
 
-Entity Framework
+Storage Capacity
+
+Shift Status
+
+Employee Activity
+
+Reports
+Daily Report
+
+Weekly Report
+
+Monthly Report
+
+Shift Report
+
+Inventory Report
+
+Employee Report
+
+AI Prediction
+Shift-wise Prediction
+
+Daily Prediction
+
+Weekly Prediction
+
+Low Stock Forecast
+
+7. Technical Requirements
+Frontend
+React.js
+
+TypeScript
+
+Tailwind CSS
+
+Bootstrap
+
+React Router
+
+Chart.js / Recharts
+
+Backend
+ASP.NET Core Web API
+
+Entity Framework Core
+
+Repository Pattern
 
 JWT Authentication
 
 Database
+Microsoft SQL Server (SSMS)
 
-Existing CRUD
+Development Tools
+Visual Studio 2022
 
-Working Dashboard Cards
+SQL Server Management Studio
 
-Working Login
+Postman
 
-Working Product Module
+Git & GitHub
 
-Working Inventory Module
+8. Database Design
+Product Table
+Field	Type
+ProductId	INT
+ProductCode	VARCHAR
+ProductName	VARCHAR
+Category	VARCHAR
+Quantity	INT
+QRCode	VARCHAR
+Status	VARCHAR
+Employee Table
+Field	Type
+EmployeeId	INT
+EmployeeName	VARCHAR
+Department	VARCHAR
+Role	VARCHAR
+CheckIn Table
+Field	Type
+CheckInId	INT
+ProductId	INT
+EmployeeId	INT
+Quantity	INT
+Shift	VARCHAR
+DateTime	DATETIME
+CheckOut Table
+Field	Type
+CheckOutId	INT
+ProductId	INT
+EmployeeId	INT
+Quantity	INT
+Shift	VARCHAR
+DateTime	DATETIME
+Warehouse Table
+Field	Type
+RackId	INT
+RackName	VARCHAR
+Capacity	INT
+UsedSpace	INT
+AvailableSpace	INT
+Prediction Table
+Field	Type
+PredictionId	INT
+ProductId	INT
+CurrentStock	INT
+PredictedQuantity	INT
+PredictionDate	DATE
+9. API / Integration Details
+Authentication API
+POST /api/auth/login
 
-Working Import Excel
+POST /api/auth/logout
 
-Working Download Template
+Product API
+GET /api/products
 
-Notification Backend
+GET /api/products/{id}
 
-Only improve frontend.
+POST /api/products
 
-==================================================
-FINAL GOAL
-==================================================
+PUT /api/products/{id}
 
-The application should behave like a real Manufacturing WIP Management System.
+DELETE /api/products/{id}
 
-Each role should see only the modules they are authorized to access.
+QR Code API
+POST /api/qrcode/generate
 
-Unauthorized pages must never be accessible.
+POST /api/qrcode/scan
 
-Dashboard should never redirect to Login unexpectedly.
+Inventory API
+POST /api/checkin
 
-Racks and Production pages must never show blank screens.
+POST /api/checkout
 
-Notifications should work using the existing backend APIs.
+GET /api/inventory
 
-The UI must remain responsive, modern, professional, and fully compatible with the existing backend without breaking any current functionality.
+Dashboard API
+GET /api/dashboard
+
+Report API
+GET /api/reports/daily
+
+GET /api/reports/weekly
+
+GET /api/reports/monthly
+
+Prediction API
+GET /api/predictions
+
+10. Reports & Dashboards
+Dashboard Widgets
+Total WIP Products
+
+Products Checked-In Today
+
+Products Checked-Out Today
+
+Current WIP Quantity
+
+Warehouse Occupancy
+
+Available Storage Space
+
+Running Shift
+
+Low Stock Alerts
+
+Charts
+Shift-wise Product Usage
+
+Daily Inventory Movement
+
+Weekly Consumption
+
+Monthly Trend
+
+Space Utilization
+
+Employee Activity
+
+Reports
+Daily WIP Report
+
+Weekly Report
+
+Monthly Report
+
+Inventory Report
+
+Product Movement Report
+
+Shift Report
+
+Employee Activity Report
+
+Prediction Report
+
+11. Security Requirements
+JWT-based Authentication
+
+Role-based Authorization (Admin, Supervisor, Operator)
+
+Password Encryption
+
+Secure API Access
+
+HTTPS Communication
+
+SQL Injection Prevention
+
+Input Validation
+
+Audit Logging
+
+Session Timeout
+
+Error Logging
+
+12. Test Cases
+Test Case	Expected Result
+Login with valid credentials	Login successful
+Login with invalid credentials	Error message displayed
+Scan valid QR code	Product details displayed
+Scan invalid QR code	Invalid QR notification
+Product Check-In	Inventory updated
+Product Check-Out	Inventory reduced
+Dashboard refresh	Latest data displayed
+Generate report	Report downloaded successfully
+Low stock	Alert displayed
+Prediction	Forecast displayed
+13. Assumptions & Dependencies
+Assumptions
+Every product has a unique QR code.
+
+Employees have valid login credentials.
+
+QR scanners function correctly.
+
+Database server is continuously available.
+
+Internet/LAN connectivity is stable.
+
+Dependencies
+Visual Studio 2022
+
+.NET 8
+
+React.js
+
+SQL Server
+
+Entity Framework Core
+
+QR Code Library
+
+Chart.js/Recharts
+
+JWT Authentication
+
+GitHub
+
+14. Approvals
+Role	Name	Signature	Date
+Project Guide			
+Department Head			
+Project Manager			
+Development Team			
+Client Representative
