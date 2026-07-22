@@ -298,3 +298,105 @@ Employees should be able to:
 • Fill the template correctly.
 • Upload it using the existing Import Excel feature.
 • Import products successfully without any changes to the backend or existing Product module.
+
+
+
+The WIP Management System backend is already working correctly.
+
+IMPORTANT RULES:
+
+1. Do NOT modify any existing working functionality.
+2. Do NOT rename or delete any Controllers, Models, DTOs, Services, Repositories, Interfaces, or API routes.
+3. Do NOT modify existing Notification models or database schema.
+4. Do NOT modify Product, Inventory, Employee, Warehouse, Rack, Prediction, Login, JWT Authentication, Authorization, Swagger, or any existing CRUD APIs.
+5. Do NOT create breaking changes.
+6. All existing APIs must continue working exactly as they are.
+
+Objective:
+Implement an approval workflow for Product Check-Out Requests using the existing Notification APIs and database.
+
+Requirements:
+
+1. Employees should NOT directly reduce inventory during Check-Out.
+
+2. When an Employee submits a Check-Out request:
+
+   - Save the request in the database.
+   - Status = Pending.
+   - Inventory should NOT be updated.
+   - Create a notification using the existing Notification module.
+   - Save the notification in the existing Notification table.
+   - Reuse existing Notification APIs.
+   - Do NOT create another notification table.
+
+3. The notification should include:
+
+   - Employee Name
+   - Product Name
+   - Requested Quantity
+   - Date & Time
+   - Status = Pending
+
+4. Notifications must be stored permanently in SQL Server.
+
+5. Admin should retrieve notifications using the existing Notification APIs.
+
+6. Admin can later Approve or Reject the request.
+
+7. If Approved:
+
+   - Reduce inventory.
+   - Update request status to Approved.
+   - Save changes in SQL Server.
+   - Create another notification informing the employee.
+
+8. If Rejected:
+
+   - Inventory remains unchanged.
+   - Update request status to Rejected.
+   - Save changes in SQL Server.
+   - Notify the employee.
+
+9. All notifications must be saved in the existing Notification database table.
+
+10. Continue using the existing Notification and Notifications Controllers without changing their routes.
+
+11. Do NOT modify existing Notification Models, DTOs, or Entity Framework relationships unless absolutely required for compatibility.
+
+12. Maintain compatibility with the existing frontend and Swagger endpoints.
+
+13. Use Entity Framework Core best practices.
+
+14. Follow Repository Pattern and existing project architecture.
+
+15. Ensure all operations are transactional so database consistency is maintained.
+
+Expected Workflow:
+
+Employee
+↓
+
+Submit Check-Out Request
+↓
+
+Save Pending Request
+↓
+
+Create Notification (Existing Notification Module)
+↓
+
+Admin views notification
+↓
+
+Approve / Reject
+↓
+
+Update Database
+↓
+
+Create Employee Notification
+↓
+
+Frontend displays updated status.
+
+Do not introduce breaking changes anywhere in the project.
