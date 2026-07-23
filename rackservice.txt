@@ -1,0 +1,82 @@
+using System.Linq;
+using wipmanagement.api.DTOs;
+using wipmanagement.api.Interfaces.Repositories;
+using wipmanagement.api.Interfaces.Services;
+using wipmanagement.api.Models;
+
+namespace wipmanagement.api.Services
+{
+    public class RackService : IRackService
+    {
+        private readonly IRackRepository _rackRepository;
+        private readonly IWarehouseRepository _warehouseRepository;
+
+        public RackService(IRackRepository rackRepository, IWarehouseRepository warehouseRepository)
+        {
+            _rackRepository = rackRepository;
+            _warehouseRepository = warehouseRepository;
+        }
+
+        public async Task<RackDto> CreateAsync(RackCreateDto dto)
+        {
+            // validate warehouse exists
+            var wh = await _warehouseRepository.GetByIdAsync(dto.WarehouseId);
+            if (wh == null || wh.IsDeleted) throw new InvalidOperationException("Warehouse not found");
+
+            var rack = new Rack
+            {
+                RackCode = dto.RackCode,
+                WarehouseId = dto.WarehouseId,
+                Capacity = dto.Capacity,
+                Occupied = 0
+            };
+
+            await _rackRepository.AddAsync(rack);
+            await _rackRepository.SaveChangesAsync();
+
+            return new RackDto { RackId = rack.RackId, RackCode = rack.RackCode, WarehouseId = rack.WarehouseId, Capacity = rack.Capacity, Occupied = rack.Occupied };
+        }
+
+        public async Task<IEnumerable<RackDto>> GetAllAsync()
+        {
+            var list = await _rackRepository.GetAllActiveAsync();
+            return list.Select(r => new RackDto { RackId = r.RackId, RackCode = r.RackCode, WarehouseId = r.WarehouseId, Capacity = r.Capacity, Occupied = r.Occupied });
+        }
+
+        public async Task<RackDto?> GetByIdAsync(int id)
+        {
+            var r = await _rackRepository.GetByIdAsync(id);
+            if (r == null || r.IsDeleted) return null;
+            return new RackDto { RackId = r.RackId, RackCode = r.RackCode, WarehouseId = r.WarehouseId, Capacity = r.Capacity, Occupied = r.Occupied };
+        }
+
+        public async Task<RackDto> UpdateAsync(RackUpdateDto dto)
+        {
+            var r = await _rackRepository.GetByIdAsync(dto.RackId);
+            if (r == null) throw new InvalidOperationException("Rack not found");
+
+            var wh = await _warehouseRepository.GetByIdAsync(dto.WarehouseId);
+            if (wh == null || wh.IsDeleted) throw new InvalidOperationException("Warehouse not found");
+
+            r.RackCode = dto.RackCode;
+            r.WarehouseId = dto.WarehouseId;
+            r.Capacity = dto.Capacity;
+            r.Occupied = dto.Occupied;
+
+            _rackRepository.Update(r);
+            await _rackRepository.SaveChangesAsync();
+
+            return new RackDto { RackId = r.RackId, RackCode = r.RackCode, WarehouseId = r.WarehouseId, Capacity = r.Capacity, Occupied = r.Occupied };
+        }
+
+        public async Task<bool> SoftDeleteAsync(int id)
+        {
+            var r = await _rackRepository.GetByIdAsync(id);
+            if (r == null) return false;
+            r.IsDeleted = true;
+            _rackRepository.Update(r);
+            await _rackRepository.SaveChangesAsync();
+            return true;
+        }
+    }
+}
