@@ -19,9 +19,10 @@ namespace wipmanagement.api.Services
 
         public async Task<RackDto> CreateAsync(RackCreateDto dto)
         {
-            // validate warehouse exists
             var wh = await _warehouseRepository.GetByIdAsync(dto.WarehouseId);
-            if (wh == null || wh.IsDeleted) throw new InvalidOperationException("Warehouse not found");
+
+            if (wh == null || wh.IsDeleted)
+                throw new InvalidOperationException("Warehouse not found");
 
             var rack = new Rack
             {
@@ -34,48 +35,114 @@ namespace wipmanagement.api.Services
             await _rackRepository.AddAsync(rack);
             await _rackRepository.SaveChangesAsync();
 
-            return new RackDto { RackId = rack.RackId, RackCode = rack.RackCode, WarehouseId = rack.WarehouseId, Capacity = rack.Capacity, Occupied = rack.Occupied };
+            return new RackDto
+            {
+                RackId = rack.RackId,
+                RackCode = rack.RackCode,
+                WarehouseId = rack.WarehouseId,
+                Capacity = rack.Capacity,
+                Occupied = rack.Occupied,
+                Available = rack.Capacity - rack.Occupied,
+                Status = "Available"
+            };
         }
 
         public async Task<IEnumerable<RackDto>> GetAllAsync()
         {
             var list = await _rackRepository.GetAllActiveAsync();
-            return list.Select(r => new RackDto { RackId = r.RackId, RackCode = r.RackCode, WarehouseId = r.WarehouseId, Capacity = r.Capacity, Occupied = r.Occupied });
+
+            return list.Select(r => new RackDto
+            {
+                RackId = r.RackId,
+                RackCode = r.RackCode,
+                WarehouseId = r.WarehouseId,
+                Capacity = r.Capacity,
+                Occupied = r.Occupied,
+                Available = r.Capacity - r.Occupied,
+                Status =
+                    (r.Capacity - r.Occupied) == 0
+                        ? "Full"
+                        : (r.Capacity - r.Occupied) <= (r.Capacity * 20 / 100)
+                            ? "Almost Full"
+                            : "Available"
+            });
         }
 
         public async Task<RackDto?> GetByIdAsync(int id)
         {
             var r = await _rackRepository.GetByIdAsync(id);
-            if (r == null || r.IsDeleted) return null;
-            return new RackDto { RackId = r.RackId, RackCode = r.RackCode, WarehouseId = r.WarehouseId, Capacity = r.Capacity, Occupied = r.Occupied };
+
+            if (r == null || r.IsDeleted)
+                return null;
+
+            return new RackDto
+            {
+                RackId = r.RackId,
+                RackCode = r.RackCode,
+                WarehouseId = r.WarehouseId,
+                Capacity = r.Capacity,
+                Occupied = r.Occupied,
+                Available = r.Capacity - r.Occupied,
+                Status =
+                    (r.Capacity - r.Occupied) == 0
+                        ? "Full"
+                        : (r.Capacity - r.Occupied) <= (r.Capacity * 20 / 100)
+                            ? "Almost Full"
+                            : "Available"
+            };
         }
 
         public async Task<RackDto> UpdateAsync(RackUpdateDto dto)
         {
             var r = await _rackRepository.GetByIdAsync(dto.RackId);
-            if (r == null) throw new InvalidOperationException("Rack not found");
+
+            if (r == null)
+                throw new InvalidOperationException("Rack not found");
 
             var wh = await _warehouseRepository.GetByIdAsync(dto.WarehouseId);
-            if (wh == null || wh.IsDeleted) throw new InvalidOperationException("Warehouse not found");
+
+            if (wh == null || wh.IsDeleted)
+                throw new InvalidOperationException("Warehouse not found");
+
+            if (dto.Capacity < r.Occupied)
+                throw new InvalidOperationException("Capacity cannot be less than occupied space.");
 
             r.RackCode = dto.RackCode;
             r.WarehouseId = dto.WarehouseId;
             r.Capacity = dto.Capacity;
-            r.Occupied = dto.Occupied;
 
             _rackRepository.Update(r);
             await _rackRepository.SaveChangesAsync();
 
-            return new RackDto { RackId = r.RackId, RackCode = r.RackCode, WarehouseId = r.WarehouseId, Capacity = r.Capacity, Occupied = r.Occupied };
+            return new RackDto
+            {
+                RackId = r.RackId,
+                RackCode = r.RackCode,
+                WarehouseId = r.WarehouseId,
+                Capacity = r.Capacity,
+                Occupied = r.Occupied,
+                Available = r.Capacity - r.Occupied,
+                Status =
+                    (r.Capacity - r.Occupied) == 0
+                        ? "Full"
+                        : (r.Capacity - r.Occupied) <= (r.Capacity * 20 / 100)
+                            ? "Almost Full"
+                            : "Available"
+            };
         }
 
         public async Task<bool> SoftDeleteAsync(int id)
         {
             var r = await _rackRepository.GetByIdAsync(id);
-            if (r == null) return false;
+
+            if (r == null)
+                return false;
+
             r.IsDeleted = true;
+
             _rackRepository.Update(r);
             await _rackRepository.SaveChangesAsync();
+
             return true;
         }
     }
