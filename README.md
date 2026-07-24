@@ -1,62 +1,48 @@
-Update only the Rack page (Racks.jsx) of my existing React frontend.
+Update only the CheckIn.jsx page.
 
-IMPORTANT:
-- Do NOT modify any backend API URLs.
-- Do NOT change authentication logic.
-- Do NOT change routing or project structure.
-- Keep the existing fetch request to:
-  https://localhost:44321/api/Rack
-- Continue using the JWT token from localStorage.
+Do not modify backend APIs or routing.
 
-Required changes:
+Implement the following workflow:
 
-1. Remove all product-related columns:
-- Product ID
-- Product Name
-- Category
-- Quantity
+1. Load all products using:
+GET /api/Product
 
-2. Display only these columns:
-- Rack ID
-- Rack Code
-- Warehouse Name
-- Capacity
-- Occupied
-- Available
-- Status
+2. Display Product as a dropdown.
 
-3. Update the search box so it searches only:
-- Rack Code
-- Warehouse Name
-- Status
+3. User enters Quantity.
 
-4. Display status using Bootstrap badges:
-- Available → Green (bg-success)
-- Almost Full → Yellow (bg-warning text-dark)
-- Full → Red (bg-danger)
+4. Add a "Find Rack" button.
 
-5. Keep loading spinner and error handling unchanged.
+5. When clicked, call:
+GET /api/Rack/suggest/{quantity}
 
-6. If there is no rack data, show:
-"No Rack Data Available"
+using JWT token from localStorage.
 
-7. Make the table responsive using Bootstrap.
+6. Display returned racks in a dropdown.
 
-8. Do not change any backend logic.
+7. User selects one rack.
 
-9. Do not create new APIs.
+8. Read employeeId from localStorage.
 
-10. Use the existing API response directly.
+9. On Check-In button click call:
 
-Expected response fields are:
+POST /api/Inventory/checkin
 
-rackId
-rackCode
-warehouseName
-capacity
-occupied
-available
-status
+Body:
 
-Only modify Racks.jsx.
-Do not modify any other React component.
+{
+  productId,
+  rackId,
+  quantity,
+  employeeId
+}
+
+10. Show success and error alerts.
+
+11. Disable Check-In button until a rack is selected.
+
+12. Use Bootstrap styling.
+
+13. Keep authentication and existing project structure unchanged.
+
+Modify only CheckIn.jsx.
