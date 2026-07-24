@@ -1,54 +1,71 @@
-The Check-In feature in my WIP Management System is returning HTTP 500 even though the frontend sends valid data.
+Update only CheckOut.jsx.
 
-Current behavior:
-- Frontend sends JSON:
-{
-  "productId": 6,
-  "rackId": 2,
-  "quantity": 12,
-  "employeeId": 3
-}
-- InventoryController uses:
-[HttpPost("checkin")]
-public async Task<IActionResult> CheckIn([FromBody] CheckInDto dto)
+Do not modify backend APIs.
 
-- The API enters the controller but returns HTTP 500.
-- Frontend sometimes shows:
-"Quantity must be positive"
-even though quantity is greater than zero.
+Keep authentication and routing unchanged.
 
-Your task is to debug the entire Check-In flow automatically.
+Use only existing APIs.
 
-Check every layer:
-1. React CheckIn.jsx
-2. API request body
-3. CheckInDto model
-4. InventoryController
-5. IInventoryService
-6. InventoryService.CheckInAsync()
-7. Entity Framework SaveChanges
-8. ApplicationDbContext
-9. Entity relationships
-10. SQL database values
+Workflow:
 
-Find the exact line causing the exception.
-Do not guess.
+1. Load inventory using:
+GET /api/Inventory
+
+2. Display inventory as a searchable dropdown.
+
+3. After selecting an inventory item automatically display:
+- Product Name
+- Rack Code
+- Warehouse Name
+- Available Quantity
+
+4. Remove manual entry for:
+- Product Name
+- Category
+- Rack
+- Available Quantity
+
+These must be read-only and auto-filled.
+
+5. User should only enter:
+- Checkout Quantity
+- Destination
+
+6. Add a Rack Visualization section similar to the Check-In page.
 
 Requirements:
-- Add temporary logging where necessary.
-- Catch exceptions and display the real exception message.
-- Remove incorrect validations.
-- Fix the root cause instead of hiding the exception.
-- Ensure Rack.Occupied updates.
-- Ensure WipInventory updates.
-- Ensure CheckIn history is inserted.
-- Ensure AuditHistory is inserted.
-- Ensure SaveChangesAsync succeeds.
-- Return proper HTTP status codes.
+- Display the selected rack as a Bootstrap card.
+- Show:
+  - Rack Code
+  - Warehouse Name
+  - Capacity
+  - Occupied Space
+  - Available Space
+  - Current Product Quantity
+  - Status (Available / Almost Full / Full)
+- Display a Bootstrap progress bar showing rack utilization.
+- Highlight the selected rack.
+- Show a live preview:
+  "Remaining Quantity After Checkout: XX"
+- If checkout quantity exceeds available stock, show a Bootstrap danger alert and disable Submit.
 
-After fixing:
-- Remove temporary debugging logs.
-- Explain exactly what caused the bug.
-- Show every file modified.
-- Show every code change.
-- Do not rewrite unrelated code.
+7. Submit using the existing:
+POST /api/Inventory/checkout
+
+Send:
+{
+    wipInventoryId,
+    quantity,
+    employeeId
+}
+
+8. On success show:
+"Checkout Request Submitted Successfully"
+
+9. Reset the form and refresh inventory and rack information automatically.
+
+10. Use Bootstrap cards, responsive layout, and keep the UI consistent with the Check-In page.
+
+Do not change backend.
+
+Modify only CheckOut.jsx.
