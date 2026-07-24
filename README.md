@@ -1,51 +1,54 @@
-Fix the ASP.NET Core Inventory Check-In API to use a DTO instead of query parameters.
+The Check-In feature in my WIP Management System is returning HTTP 500 even though the frontend sends valid data.
 
-Current problem:
-- The React frontend sends JSON using:
-  Content-Type: application/json
-  body: JSON.stringify({
-      productId,
-      rackId,
-      quantity,
-      employeeId
-  });
-
-- But the backend InventoryController currently expects:
-  [FromQuery] int productId,
-  [FromQuery] int rackId,
-  [FromQuery] int quantity,
-  [FromQuery] int employeeId
-
-Because of this, all values become 0 and the service throws:
-"Quantity must be positive."
-
-Implement the following changes:
-
-1. Create a DTO named CheckInDto with:
-   - ProductId
-   - RackId
-   - Quantity
-   - EmployeeId
-
-2. Modify InventoryController CheckIn action to:
-
+Current behavior:
+- Frontend sends JSON:
+{
+  "productId": 6,
+  "rackId": 2,
+  "quantity": 12,
+  "employeeId": 3
+}
+- InventoryController uses:
 [HttpPost("checkin")]
 public async Task<IActionResult> CheckIn([FromBody] CheckInDto dto)
 
-3. Pass dto.ProductId, dto.RackId, dto.Quantity and dto.EmployeeId to InventoryService.CheckInAsync().
+- The API enters the controller but returns HTTP 500.
+- Frontend sometimes shows:
+"Quantity must be positive"
+even though quantity is greater than zero.
 
-4. Do NOT modify InventoryService business logic.
+Your task is to debug the entire Check-In flow automatically.
 
-5. Preserve JWT Authorization and existing role-based authorization.
+Check every layer:
+1. React CheckIn.jsx
+2. API request body
+3. CheckInDto model
+4. InventoryController
+5. IInventoryService
+6. InventoryService.CheckInAsync()
+7. Entity Framework SaveChanges
+8. ApplicationDbContext
+9. Entity relationships
+10. SQL database values
 
-6. Return proper HTTP responses:
-   - 200 for success
-   - 400 for validation errors
-   - 404 if required entities are missing
-   - 500 only for unexpected exceptions
+Find the exact line causing the exception.
+Do not guess.
 
-7. Remove all old [FromQuery] parameters from CheckIn.
+Requirements:
+- Add temporary logging where necessary.
+- Catch exceptions and display the real exception message.
+- Remove incorrect validations.
+- Fix the root cause instead of hiding the exception.
+- Ensure Rack.Occupied updates.
+- Ensure WipInventory updates.
+- Ensure CheckIn history is inserted.
+- Ensure AuditHistory is inserted.
+- Ensure SaveChangesAsync succeeds.
+- Return proper HTTP status codes.
 
-8. Ensure the API works directly with the existing React frontend without changing the frontend request.
-
-Generate the complete updated CheckInDto class and the complete updated InventoryController CheckIn method.
+After fixing:
+- Remove temporary debugging logs.
+- Explain exactly what caused the bug.
+- Show every file modified.
+- Show every code change.
+- Do not rewrite unrelated code.
