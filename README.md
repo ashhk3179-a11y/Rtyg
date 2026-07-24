@@ -1,48 +1,81 @@
-Update only the CheckIn.jsx page.
+Enhance only the CheckIn.jsx page.
 
-Do not modify backend APIs or routing.
+IMPORTANT:
+- Do NOT modify backend APIs.
+- Do NOT change routing.
+- Do NOT change authentication.
+- Keep the existing Check-In functionality working exactly as it is.
+- Continue using:
+  GET /api/Product
+  GET /api/Rack/suggest/{quantity}
+  POST /api/Inventory/checkin
 
-Implement the following workflow:
+After the user clicks "Find Rack", improve the UI by displaying rack utilization cards below the Suggested Rack dropdown.
 
-1. Load all products using:
-GET /api/Product
+Each suggested rack should be displayed as a Bootstrap card.
 
-2. Display Product as a dropdown.
+Each card must contain:
 
-3. User enters Quantity.
+📦 Rack Code
+Warehouse Name (if available)
+Capacity
+Occupied
+Available Space
+Status
 
-4. Add a "Find Rack" button.
+Display a Bootstrap progress bar representing rack utilization.
 
-5. When clicked, call:
-GET /api/Rack/suggest/{quantity}
+Calculation:
 
-using JWT token from localStorage.
+Used Percentage = (Occupied / Capacity) × 100
 
-6. Display returned racks in a dropdown.
+Progress bar colors:
 
-7. User selects one rack.
+0–60% → bg-success (Green)
 
-8. Read employeeId from localStorage.
+61–90% → bg-warning (Yellow)
 
-9. On Check-In button click call:
+91–100% → bg-danger (Red)
 
-POST /api/Inventory/checkin
+Example card:
 
-Body:
+---------------------------------------
+📦 RACK-C3
 
-{
-  productId,
-  rackId,
-  quantity,
-  employeeId
-}
+Warehouse : Main Warehouse
 
-10. Show success and error alerts.
+Capacity : 100
 
-11. Disable Check-In button until a rack is selected.
+Occupied : 34
 
-12. Use Bootstrap styling.
+Available : 66
 
-13. Keep authentication and existing project structure unchanged.
+Status : Available
 
-Modify only CheckIn.jsx.
+████████░░░░░░░░ 34%
+---------------------------------------
+
+If multiple racks are returned by the API,
+display all of them as responsive Bootstrap cards.
+
+When the user selects a rack from the dropdown,
+highlight the corresponding card with:
+
+border-primary
+shadow-lg
+
+Only the selected rack card should be highlighted.
+
+The dropdown must remain because it is used for submitting the selected RackId.
+
+If no rack is available, show a Bootstrap warning alert:
+
+"No suitable rack available for this quantity."
+
+Keep the UI responsive for desktop and mobile.
+
+Do not modify the backend.
+
+Do not remove any existing functionality.
+
+Only improve the frontend UI by adding the rack visualization cards.
