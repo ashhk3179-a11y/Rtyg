@@ -1,8 +1,8 @@
-using System.Linq;
 using wipmanagement.api.DTOs;
 using wipmanagement.api.Interfaces.Repositories;
 using wipmanagement.api.Interfaces.Services;
 using wipmanagement.api.Models;
+using System.Linq;
 
 namespace wipmanagement.api.Services
 {
@@ -91,6 +91,34 @@ namespace wipmanagement.api.Services
                             : "Available"
             };
         }
+
+        public async Task<IEnumerable<RackDto>> GetSuggestedRacksAsync(int quantity)
+        {
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity must be greater thn zero.");
+            var racks = await _rackRepository.GetAllActiveAsync();
+
+            return racks
+                .AsQueryable()
+                .Where(r => (r.Capacity - r.Occupied) >= quantity)
+                .OrderBy(r => (r.Capacity - r.Occupied))
+                .Select(r => new RackDto
+                {
+                    RackId = r.RackId,
+                    RackCode = r.RackCode,
+                    WarehouseId = r.WarehouseId,
+                    Capacity = r.Capacity,
+                    Occupied = r.Occupied,
+                    Available = r.Capacity - r.Occupied,
+                    Status = (r.Capacity - r.Occupied) == 0
+                    ? "Full"
+                    : (r.Capacity - r.Occupied) <= (r.Capacity * 20 / 100)
+                    ? "almost full"
+                    : "Available"
+                })
+                .ToList();
+        }
+
 
         public async Task<RackDto> UpdateAsync(RackUpdateDto dto)
         {
