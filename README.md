@@ -1,48 +1,56 @@
-Fix the entire Check-Out module.
+Fix only the CheckOut.jsx page.
 
-Do NOT modify authentication or routing.
+Do not change backend APIs, routes or authentication.
 
-Use only existing backend APIs.
+Problems to fix:
 
-Requirements:
+1. Inventory dropdown should display:
+   ProductCode - ProductName (RackCode)
 
-1. Inventory dropdown must load correctly using GET /api/Inventory.
+2. After selecting an inventory:
+   - Product Name should display correctly.
+   - Rack Code should display correctly.
+   - Warehouse Name should display correctly.
+   - Capacity should not show 0 if API contains rack capacity.
+   - Occupied should calculate correctly.
+   - Available Stock should show inventory quantity.
+   - Status should display Available / Almost Full / Full.
 
-2. Selecting an inventory item must display a Bootstrap Rack Card showing:
-- Product Name
-- Rack Code
-- Warehouse Name
-- Current Stock
-- Capacity
-- Occupied Space
-- Available Space
-- Rack Status
-- Progress Bar
+3. Do not use multiple fallback fields.
+   Read values only from the actual Inventory API response.
 
-3. Remove unnecessary readonly textboxes.
+4. The Rack Information card should be arranged in two columns:
 
-4. User should only enter:
-- Checkout Quantity
-- Destination
+   Product
+   Rack
+   Warehouse
+   Capacity
+   Occupied
+   Available
+   Status
 
-5. Show Remaining Stock live while typing.
+   with a Bootstrap progress bar below.
 
-6. Validate quantity:
-- Must be greater than zero.
-- Must not exceed current stock.
-- Show Bootstrap danger alert if invalid.
-- Disable Checkout button when invalid.
+5. Remove large empty white spaces.
 
-7. Submit using existing POST /api/Inventory/checkout API.
+6. Remaining Stock should update live:
 
-8. On success:
-- Show Bootstrap success alert.
-- Refresh inventory.
-- Refresh rack card.
-- Clear form.
+   Remaining = Available - Checkout Quantity
 
-9. Ensure Inventory, Rack utilization, Dashboard and Notifications reflect the checkout immediately.
+7. Destination should be a dropdown:
 
-10. Keep the UI clean, responsive and visually consistent with the Check-In page.
+   Shop Floor
+   Assembly
+   Production
+   Quality Check
+   Dispatch
 
-Modify only CheckOut.jsx unless a small frontend helper change is absolutely necessary. Do not change backend business logic or API contracts.
+8. Disable Checkout button when:
+   - No inventory selected
+   - Quantity <= 0
+   - Quantity > Available
+
+9. Keep existing POST /api/Inventory/checkout request unchanged.
+
+10. Do not change backend code.
+Only improve frontend UI and correct data binding.
