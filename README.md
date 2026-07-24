@@ -1,81 +1,30 @@
-Enhance only the CheckIn.jsx page.
+Fix only the Product dropdown in CheckIn.jsx.
 
-IMPORTANT:
-- Do NOT modify backend APIs.
-- Do NOT change routing.
-- Do NOT change authentication.
-- Keep the existing Check-In functionality working exactly as it is.
-- Continue using:
-  GET /api/Product
-  GET /api/Rack/suggest/{quantity}
-  POST /api/Inventory/checkin
+Do not modify backend APIs.
 
-After the user clicks "Find Rack", improve the UI by displaying rack utilization cards below the Suggested Rack dropdown.
+The GET /api/Product response contains:
 
-Each suggested rack should be displayed as a Bootstrap card.
+productId
+productCode
+name
+category
 
-Each card must contain:
+The dropdown is incorrectly displaying category.
 
-📦 Rack Code
-Warehouse Name (if available)
-Capacity
-Occupied
-Available Space
-Status
+Update it to display:
 
-Display a Bootstrap progress bar representing rack utilization.
+productCode - name
 
-Calculation:
+Example:
 
-Used Percentage = (Occupied / Capacity) × 100
+PRD011 - motor
+PRD012 - net
+PRD013 - bolt
 
-Progress bar colors:
+The option value must remain productId.
 
-0–60% → bg-success (Green)
+Do not display category.
 
-61–90% → bg-warning (Yellow)
+Do not modify Find Rack, Check-In, or backend logic.
 
-91–100% → bg-danger (Red)
-
-Example card:
-
----------------------------------------
-📦 RACK-C3
-
-Warehouse : Main Warehouse
-
-Capacity : 100
-
-Occupied : 34
-
-Available : 66
-
-Status : Available
-
-████████░░░░░░░░ 34%
----------------------------------------
-
-If multiple racks are returned by the API,
-display all of them as responsive Bootstrap cards.
-
-When the user selects a rack from the dropdown,
-highlight the corresponding card with:
-
-border-primary
-shadow-lg
-
-Only the selected rack card should be highlighted.
-
-The dropdown must remain because it is used for submitting the selected RackId.
-
-If no rack is available, show a Bootstrap warning alert:
-
-"No suitable rack available for this quantity."
-
-Keep the UI responsive for desktop and mobile.
-
-Do not modify the backend.
-
-Do not remove any existing functionality.
-
-Only improve the frontend UI by adding the rack visualization cards.
+Modify only CheckIn.jsx.
