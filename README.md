@@ -1,170 +1,165 @@
-Modify the existing ASP.NET Core WIP Management backend.
+Modify only the React frontend.
 
-Do NOT change authentication, JWT, login or existing database tables unless necessary.
+Do not change backend APIs.
 
-The Checkout process must work like an approval workflow.
+Checkout workflow must support approval process.
 
-Requirements:
+Requirements
 
-1. Checkout Request
-- Employee creates a checkout request.
-- Request must NOT reduce inventory immediately.
-- Save the request in CheckOut table.
-- Default Status = "Pending".
+1.
 
-2. Use CheckOutDto
+Employee selects inventory.
 
-Create:
+2.
 
-public class CheckOutDto
-{
-    public int WipInventoryId { get; set; }
-    public int Quantity { get; set; }
-    public int EmployeeId { get; set; }
-}
+Display Inventory Card.
 
-3. InventoryController
-
-Replace Checkout endpoint.
-
-Current endpoint uses FromQuery.
-
-Change it to:
-
-POST /api/Inventory/checkout
-
-using
-
-[FromBody] CheckOutDto
-
-Call
-
-CheckOutAsync(dto.WipInventoryId,
-dto.Quantity,
-dto.EmployeeId)
-
-4. Validation
-
-Reject request if:
-
-Quantity <= 0
-
-Inventory not found
-
-Requested Quantity > Current Inventory Quantity
-
-Return proper BadRequest message.
-
-5. Notification
-
-Create notification for Admin.
-
-Notification should contain
-
-Employee ID
-
-Employee Name
-
-Product Code
-
-Product Name
-
-Quantity
-
-Date
-
-Status = Pending
-
-Title
-
-"New Checkout Request"
-
-6. Approval
-
-Existing ApproveCheckOutAsync should
-
-Reduce Inventory
-
-Reduce Rack Occupied
-
-Update Checkout Status = Approved
-
-Save Audit
-
-Create notification to Employee
-
-"Your checkout request has been Approved."
-
-7. Reject
-
-Reject should
-
-Only change Status = Rejected
-
-Inventory must remain unchanged.
-
-Create notification
-
-"Your checkout request has been Rejected."
-
-8. GetAll Inventory
-
-Current API returns only
-
-ProductId
-
-RackId
-
-Quantity
-
-Modify GetAllAsync()
-
-Include
+Show
 
 Product
+
+Product Code
 
 Rack
 
 Warehouse
 
-Return DTO containing
-
-ProductName
-
-ProductCode
-
-RackCode
-
-WarehouseName
-
-Rack Capacity
+Capacity
 
 Occupied
 
+Available Stock
+
 Status
+
+Progress Bar
+
+3.
+
+Show Employee ID automatically.
+
+Read
+
+employeeId
+
+from localStorage.
+
+Display it in a readonly textbox.
+
+Do not allow editing.
+
+4.
+
+Checkout Form
+
+Employee ID (Readonly)
+
+Checkout Quantity
+
+Destination Dropdown
+
+5.
+
+Destination options
+
+Shop Floor
+
+Assembly
+
+Production
+
+Quality Check
+
+Dispatch
+
+6.
+
+Validation
+
+Quantity > 0
+
+Quantity <= Available Stock
+
+Disable button when invalid.
+
+7.
+
+POST
+
+/api/Inventory/checkout
+
+Send JSON
+
+{
+wipInventoryId,
+quantity,
+employeeId
+}
+
+8.
+
+Success
+
+Show
+
+"Checkout Request Sent Successfully.
+
+Waiting for Admin Approval."
+
+Do NOT reduce inventory.
+
+Do NOT update available quantity.
+
+Inventory changes only after Admin Approval.
+
+9.
+
+Admin Notification page
+
+Show
+
+Employee ID
+
+Employee Name
+
+Product
 
 Quantity
 
-LastUpdated
+Status
 
-Use Entity Framework Include()
+Date
 
-.Include(Product)
+Approve button
 
-.Include(Rack)
+Reject button
 
-.ThenInclude(Warehouse)
+10.
 
-9. Logging
+Employee Notification page
 
-Log
+Pending
 
-Checkout Requested
+Approved
 
-Checkout Approved
+Rejected
 
-Checkout Rejected
+should be displayed using badge colors.
 
-10. Keep all existing APIs working.
+Pending = Yellow
 
-Do not break CheckIn.
+Approved = Green
+
+Rejected = Red
+
+11.
+
+UI
+
+Professional Bootstrap dashboard
+
+No empty spaces
+
+Responsive
+
+Keep same theme as CheckIn page.
