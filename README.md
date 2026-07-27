@@ -1,73 +1,112 @@
-Fix the Checkout Approval workflow in the ASP.NET Core backend.
+Fix the Checkout and Notification pages.
 
-Do NOT modify JWT Authentication, Login, Check-In, Products or other working APIs.
+Do NOT change backend URLs.
 
-Requirements:
+Requirements
 
-1. Checkout API
+1.
 
-Replace the existing Checkout endpoint to use JSON request.
+Checkout page must submit JSON.
 
-Create:
+POST
 
-public class CheckOutDto
+/api/Inventory/checkout
+
+Headers
+
+Content-Type: application/json
+
+Authorization: Bearer Token
+
+Body
+
 {
-    public int WipInventoryId { get; set; }
-    public int Quantity { get; set; }
-    public int EmployeeId { get; set; }
+    wipInventoryId,
+    quantity,
+    employeeId
 }
 
-Controller:
-
-POST /api/Inventory/checkout
-
-Use
-
-[FromBody] CheckOutDto dto
-
-instead of FromQuery.
-
-Call
-
-CheckOutAsync(dto.WipInventoryId,
-dto.Quantity,
-dto.EmployeeId)
-
-This must remove the 415 Unsupported Media Type error.
+Do not use query parameters.
 
 ---------------------------------------------------
 
-2. Checkout Request
+2.
 
-When Employee submits checkout
+Checkout page
 
-Create one CheckOut record
+Display
 
-Status = Pending
+Product
 
-Do NOT reduce inventory.
+Product Code
 
-Do NOT reduce rack occupancy.
+Rack
+
+Warehouse
+
+Capacity
+
+Occupied
+
+Available
+
+Status
+
+Progress Bar
+
+Employee ID (Readonly)
+
+Quantity
+
+Destination
 
 ---------------------------------------------------
 
-3. Notification
+3.
 
-When checkout request is created
+Employee ID
 
-Create notification for Admin.
+Read automatically from localStorage.
 
-Notification must contain
+Never allow editing.
 
-CheckOutId
+---------------------------------------------------
 
-EmployeeId
+4.
+
+Validation
+
+Quantity > 0
+
+Quantity <= Available
+
+Disable button if invalid.
+
+---------------------------------------------------
+
+5.
+
+Success Message
+
+Checkout Request Submitted Successfully.
+
+Waiting for Admin Approval.
+
+Do not reduce inventory.
+
+---------------------------------------------------
+
+6.
+
+Notification Page
+
+Display
 
 Employee Name
 
-ProductId
+Employee ID
 
-Product Name
+Product
 
 Quantity
 
@@ -75,100 +114,74 @@ Status
 
 Date
 
-Title
+---------------------------------------------------
 
-Message
+7.
 
-Save CheckOutId inside Notification table.
+Approve button
 
-Do not rely only on NotificationId.
+Do NOT send NotificationId.
+
+Send CheckOutId.
+
+POST
+
+/api/Inventory/checkout/approve/{checkOutId}
 
 ---------------------------------------------------
 
-4. Approve
+8.
 
-Approve endpoint must receive CheckOutId.
+Reject button
 
-Find Checkout using CheckOutId.
+POST
 
-If Status == Pending
-
-Reduce Inventory Quantity
-
-Reduce Rack Occupied
-
-Status = Approved
-
-Save Audit
-
-Create notification for Employee
-
-"Your Checkout Request has been Approved."
+/api/Inventory/checkout/reject/{checkOutId}
 
 ---------------------------------------------------
 
-5. Reject
+9.
 
-Receive CheckOutId.
+After Approve
 
-Only update
+Refresh
 
-Status = Rejected
+Notifications
 
-Inventory must NOT change.
+Inventory
 
-Create notification for Employee.
-
----------------------------------------------------
-
-6. Inventory API
-
-GET /api/Inventory
-
-Include
-
-Product
+Dashboard
 
 Rack
 
-Warehouse
+---------------------------------------------------
 
-Return
+10.
 
-ProductName
+After Reject
 
-ProductCode
+Refresh Notifications.
 
-RackCode
-
-WarehouseName
-
-Capacity
-
-Occupied
-
-Status
-
-Quantity
-
-LastUpdated
-
-using Entity Framework Include().
+Inventory must remain unchanged.
 
 ---------------------------------------------------
 
-7. Logging
+11.
 
-Log
+Remove
 
-Checkout Requested
+"Unable to locate matching checkout request"
 
-Checkout Approved
-
-Checkout Rejected
+by using CheckOutId instead of NotificationId.
 
 ---------------------------------------------------
 
-8. Do not break existing APIs.
+12.
 
-Check-In must continue working exactly as before.
+Use Bootstrap only.
+
+Responsive.
+
+Professional UI.
+
+Do not modify Login or Check-In.
