@@ -1,128 +1,73 @@
-Modify only the React frontend.
+Fix the Checkout Approval workflow in the ASP.NET Core backend.
 
-Do not change backend APIs.
+Do NOT modify JWT Authentication, Login, Check-In, Products or other working APIs.
 
-Checkout workflow must support approval process.
+Requirements:
 
-Requirements
+1. Checkout API
 
-1.
+Replace the existing Checkout endpoint to use JSON request.
 
-Employee selects inventory.
+Create:
 
-2.
-
-Display Inventory Card.
-
-Show
-
-Product
-
-Product Code
-
-Rack
-
-Warehouse
-
-Capacity
-
-Occupied
-
-Available Stock
-
-Status
-
-Progress Bar
-
-3.
-
-Show Employee ID automatically.
-
-Read
-
-employeeId
-
-from localStorage.
-
-Display it in a readonly textbox.
-
-Do not allow editing.
-
-4.
-
-Checkout Form
-
-Employee ID (Readonly)
-
-Checkout Quantity
-
-Destination Dropdown
-
-5.
-
-Destination options
-
-Shop Floor
-
-Assembly
-
-Production
-
-Quality Check
-
-Dispatch
-
-6.
-
-Validation
-
-Quantity > 0
-
-Quantity <= Available Stock
-
-Disable button when invalid.
-
-7.
-
-POST
-
-/api/Inventory/checkout
-
-Send JSON
-
+public class CheckOutDto
 {
-wipInventoryId,
-quantity,
-employeeId
+    public int WipInventoryId { get; set; }
+    public int Quantity { get; set; }
+    public int EmployeeId { get; set; }
 }
 
-8.
+Controller:
 
-Success
+POST /api/Inventory/checkout
 
-Show
+Use
 
-"Checkout Request Sent Successfully.
+[FromBody] CheckOutDto dto
 
-Waiting for Admin Approval."
+instead of FromQuery.
+
+Call
+
+CheckOutAsync(dto.WipInventoryId,
+dto.Quantity,
+dto.EmployeeId)
+
+This must remove the 415 Unsupported Media Type error.
+
+---------------------------------------------------
+
+2. Checkout Request
+
+When Employee submits checkout
+
+Create one CheckOut record
+
+Status = Pending
 
 Do NOT reduce inventory.
 
-Do NOT update available quantity.
+Do NOT reduce rack occupancy.
 
-Inventory changes only after Admin Approval.
+---------------------------------------------------
 
-9.
+3. Notification
 
-Admin Notification page
+When checkout request is created
 
-Show
+Create notification for Admin.
 
-Employee ID
+Notification must contain
+
+CheckOutId
+
+EmployeeId
 
 Employee Name
 
-Product
+ProductId
+
+Product Name
 
 Quantity
 
@@ -130,36 +75,100 @@ Status
 
 Date
 
-Approve button
+Title
 
-Reject button
+Message
 
-10.
+Save CheckOutId inside Notification table.
 
-Employee Notification page
+Do not rely only on NotificationId.
 
-Pending
+---------------------------------------------------
 
-Approved
+4. Approve
 
-Rejected
+Approve endpoint must receive CheckOutId.
 
-should be displayed using badge colors.
+Find Checkout using CheckOutId.
 
-Pending = Yellow
+If Status == Pending
 
-Approved = Green
+Reduce Inventory Quantity
 
-Rejected = Red
+Reduce Rack Occupied
 
-11.
+Status = Approved
 
-UI
+Save Audit
 
-Professional Bootstrap dashboard
+Create notification for Employee
 
-No empty spaces
+"Your Checkout Request has been Approved."
 
-Responsive
+---------------------------------------------------
 
-Keep same theme as CheckIn page.
+5. Reject
+
+Receive CheckOutId.
+
+Only update
+
+Status = Rejected
+
+Inventory must NOT change.
+
+Create notification for Employee.
+
+---------------------------------------------------
+
+6. Inventory API
+
+GET /api/Inventory
+
+Include
+
+Product
+
+Rack
+
+Warehouse
+
+Return
+
+ProductName
+
+ProductCode
+
+RackCode
+
+WarehouseName
+
+Capacity
+
+Occupied
+
+Status
+
+Quantity
+
+LastUpdated
+
+using Entity Framework Include().
+
+---------------------------------------------------
+
+7. Logging
+
+Log
+
+Checkout Requested
+
+Checkout Approved
+
+Checkout Rejected
+
+---------------------------------------------------
+
+8. Do not break existing APIs.
+
+Check-In must continue working exactly as before.
