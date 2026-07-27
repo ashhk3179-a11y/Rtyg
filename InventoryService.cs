@@ -10,11 +10,19 @@ namespace wipmanagement.api.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly INotificationService _notificationService;
+        private readonly Microsoft.Extensions.Logging.ILogger<InventoryService> _logger;
 
-        public InventoryService(ApplicationDbContext context, INotificationService notificationService)
+        public InventoryService(ApplicationDbContext context, INotificationService notificationService, Microsoft.Extensions.Logging.ILogger<InventoryService> logger)
         {
             _context = context;
             _notificationService = notificationService;
+            _logger = logger;
+        }
+
+        // Backwards-compatible constructor for tests and callers that don't provide ILogger
+        public InventoryService(ApplicationDbContext context, INotificationService notificationService)
+            : this(context, notificationService, Microsoft.Extensions.Logging.Abstractions.NullLogger<InventoryService>.Instance)
+        {
         }
 
         public async Task<WipInventoryDto> CheckInAsync(int productId, int rackId, int quantity, int employeeId)
@@ -36,6 +44,11 @@ namespace wipmanagement.api.Services
 
             var rack = await _context.Racks.FindAsync(rackId);
             if (rack == null) throw new InvalidOperationException("Rack not found");
+            var available = rack.Capacity - rack.Occupied;
+            if (quantity > available)
+            {
+                throw new InvalidOperationException($"Rack {rack.RackCode} has only {available} space available.");
+            }
             rack.Occupied += quantity;
             _context.Racks.Update(rack);
 
@@ -46,8 +59,9 @@ namespace wipmanagement.api.Services
             _context.AuditHistories.Add(audit);
 
             await _context.SaveChangesAsync();
+            _logger.LogDebug("WipInventory saved: {WipInventoryId}", wip.WipInventoryId);
 
-            // Create notification for Admin
+            // Create notification for Admin (best-effort, do not fail main operation)
             try
             {
                 var product = await _context.Products.FindAsync(productId);
@@ -57,20 +71,12 @@ namespace wipmanagement.api.Services
                 var title = "CheckIn";
                 var message = $"Employee {employee?.EmployeeCode} checked in {quantity} for Product {product?.ProductCode} to Rack {rackInfo?.RackCode}.";
 
-                // Insert notification directly
-                _context.Notifications.Add(new Notification
-                {
-                    Title = title,
-                    Message = message,
-                    RecipientRole = "Admin",
-                    Status = "Unread",
-                    Timestamp = DateTime.UtcNow
-                });
-                await _context.SaveChangesAsync();
+                var notifDto = new DTOs.NotificationCreateDto { EmployeeId = null, Title = title, Message = message };
+                await _notificationService.CreateAsync(notifDto);
             }
-            catch
+            catch (Exception ex)
             {
-                // Do not fail the main operation if notification fails
+                _logger.LogWarning(ex, "Failed to create check-in notification (non-fatal)");
             }
 
             return new WipInventoryDto { WipInventoryId = wip.WipInventoryId, ProductId = wip.ProductId, RackId = wip.RackId, Quantity = wip.Quantity, LastUpdated = wip.LastUpdated };
@@ -204,7 +210,11 @@ namespace wipmanagement.api.Services
 
             var wip = new WipInventory { ProductId = productId, RackId = rackId, Quantity = quantity, LastUpdated = DateTime.UtcNow };
             _context.WipInventories.Add(wip);
-
+            var available = rack.Capacity - rack.Occupied;
+            if (quantity > available)
+            {
+                throw new InvalidOperationException($"Rack {rack.RackCode} has only {available} space available.");
+            }
             rack.Occupied += quantity;
             _context.Racks.Update(rack);
 
@@ -231,6 +241,14 @@ namespace wipmanagement.api.Services
             if (rack == null || rack.IsDeleted) throw new InvalidOperationException("Rack not found");
 
             var diff = quantity - w.Quantity;
+            if (rack.Occupied + diff < 0)
+            {
+                throw new InvalidOperationException($"Rack {rack.RackCode} occupied quantity become negetive.");
+            }
+                if (rack.Occupied + diff > rack.Capacity)
+            {
+                throw new InvalidOperationException($"Rack {rack.RackCode} capacity exceeded.");
+            }
             w.Quantity = quantity;
             w.LastUpdated = DateTime.UtcNow;
             _context.WipInventories.Update(w);
