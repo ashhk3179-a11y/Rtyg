@@ -1,33 +1,34 @@
-I have a React frontend for a WIP Management System.
+I have restored my React frontend to a clean version.
 
+IMPORTANT:
 Do NOT redesign the UI.
+Do NOT create a new Unauthorized page.
+Do NOT change routing unless required.
+Do NOT change the login design.
+Do NOT modify components unrelated to permissions.
 
-Only fix permission and sidebar logic.
+Current situation:
+- Login works.
+- Employee list works.
+- Edit Employee works.
+- Access Update popup shows success.
 
-Current status:
-- Login succeeds.
-- Backend returns token and access.
-- Access update popup says success.
-- Employee edit works.
+Actual problems:
 
-Problems:
-1. After login users sometimes go to /unauthorized.
-2. Sidebar does not update according to employee permissions.
-3. Updated permissions only work after refresh or never update.
-4. Some pages remain blocked even though permission exists.
-5. Unauthorized page appears incorrectly.
-6. Sidebar sometimes disappears.
+1. Sidebar does not refresh according to the latest employee access.
+2. After admin changes access, the employee logs in again but still sees old permissions.
+3. Sidebar must be generated only from the Access returned by Login API.
+4. Remove every hardcoded sidebar permission.
+5. After successful login, store the latest Access from LoginResponse.
+6. Update AuthContext/localStorage/session with the latest Access.
+7. ProtectedRoute must use the latest Access only.
+8. Do NOT create or modify Unauthorized UI.
+9. Do NOT add any new pages.
+10. Keep existing UI and routing unchanged.
 
-Tasks:
-1. Save Access from login response into localStorage.
-2. Decode JWT only if required.
-3. Build sidebar dynamically from Access.
-4. Remove hardcoded menu permissions.
-5. Re-read permissions after every login.
-6. Re-read permissions after Update Access.
-7. Refresh auth context after permission update.
-8. Fix ProtectedRoute permission checking.
-9. Redirect to Dashboard after successful login.
-10. Keep existing UI unchanged.
+Only modify the files necessary to fix the permission system.
 
-At the end list every modified file and explain every change.
+Finally provide:
+- Modified files
+- Reason for each change
+- How to test the fix
