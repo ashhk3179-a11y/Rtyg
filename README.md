@@ -1,187 +1,194 @@
-Fix the Checkout and Notification pages.
+I have an ASP.NET Core 8 Web API project for WIP Management.
 
-Do NOT change backend URLs.
+Current status:
+- Employee CRUD works.
+- Admin can open Edit Access dialog.
+- Access is saved into Employee.Access column.
+- Edit employee also works.
+- JWT authentication works.
 
-Requirements
+Problems:
+1. Login API response does not include employee Access permissions.
+2. JWT token does not always contain the "access" claim.
+3. Frontend cannot determine which modules an employee can access.
+4. Access permissions are saved in the database but are not reflected after employee login.
+5. Unauthorized routes occur because login response lacks permission information.
 
-1.
+Fix the backend without changing existing API routes.
 
-Checkout page must submit JSON.
+Requirements:
 
-POST
+1. Employee model
+- Keep Access as comma-separated string.
+Example:
+Dashboard,Inventory,Check-In,Reports
 
-/api/Inventory/checkout
+2. LoginResponse DTO must include:
+- Token
+- EmployeeId
+- EmployeeCode
+- Name
+- Role
+- Email
+- Access
 
-Headers
+3. AuthService
+When login succeeds:
+- Read Employee.Access from database.
+- Add JWT claim:
+new Claim("access", employee.Access ?? "")
 
-Content-Type: application/json
+Return LoginResponse:
 
-Authorization: Bearer Token
+Token
+EmployeeId
+EmployeeCode
+Name
+Role
+Email
+Access
 
-Body
+4. AuthenticateByEmailAsync
+Must also return Access.
 
-{
-    wipInventoryId,
-    quantity,
-    employeeId
-}
+5. Ensure Employee.Access is loaded from database.
 
-Do not use query parameters.
+6. EmployeeController PUT /access
+Must update Employee.Access correctly.
 
----------------------------------------------------
+7. EmployeeController PUT /employee
+Must not overwrite Access unless access is intentionally updated.
 
-2.
+8. Delete employee must work.
 
-Checkout page
+9. Add proper validation and logging.
 
-Display
+10. Return proper HTTP status codes.
 
-Product
+Do NOT change database schema.
+Do NOT rename existing endpoints.
+Only fix authentication, login response and access permission flow.
 
-Product Code
+Finally provide complete updated code for every modified file.
 
-Rack
+..
 
-Warehouse
+.
 
-Capacity
+I have a React WIP Management application.
 
-Occupied
+Backend already stores employee permissions in Employee.Access as a comma-separated string.
 
-Available
+Problems:
 
-Status
+1. Sidebar becomes blank after employee login.
+2. Unauthorized page appears even when access is granted.
+3. Admin successfully saves permissions but employee cannot see updated menu after logging in again.
+4. Edit Employee should work without affecting permissions.
+5. Delete Employee should work.
+6. Sidebar should display only allowed modules.
+7. After permission update, employee should see changes after next login.
+8. Old permission data should not remain in localStorage.
 
-Progress Bar
+Fix the frontend without changing API routes.
 
-Employee ID (Readonly)
+Requirements:
 
-Quantity
+1. Login
+After successful login store:
 
-Destination
+token
+employeeId
+employeeCode
+role
+name
+email
+access
 
----------------------------------------------------
+inside localStorage.
 
-3.
+2. Parse permissions:
 
-Employee ID
+const permissions =
+(localStorage.getItem("access") || "")
+.split(",")
+.map(x=>x.trim())
+.filter(Boolean);
 
-Read automatically from localStorage.
+3. Sidebar
 
-Never allow editing.
+Show only modules included in permissions.
 
----------------------------------------------------
-
-4.
-
-Validation
-
-Quantity > 0
-
-Quantity <= Available
-
-Disable button if invalid.
-
----------------------------------------------------
-
-5.
-
-Success Message
-
-Checkout Request Submitted Successfully.
-
-Waiting for Admin Approval.
-
-Do not reduce inventory.
-
----------------------------------------------------
-
-6.
-
-Notification Page
-
-Display
-
-Employee Name
-
-Employee ID
-
-Product
-
-Quantity
-
-Status
-
-Date
-
----------------------------------------------------
-
-7.
-
-Approve button
-
-Do NOT send NotificationId.
-
-Send CheckOutId.
-
-POST
-
-/api/Inventory/checkout/approve/{checkOutId}
-
----------------------------------------------------
-
-8.
-
-Reject button
-
-POST
-
-/api/Inventory/checkout/reject/{checkOutId}
-
----------------------------------------------------
-
-9.
-
-After Approve
-
-Refresh
-
-Notifications
-
-Inventory
+Example:
 
 Dashboard
+Inventory
+Products
+Reports
+Notifications
+Check-In
+Check-Out
+WIP
+Racks
+Prediction
+Employees
 
-Rack
+Hide everything else.
 
----------------------------------------------------
+4. ProtectedRoute
 
-10.
+Before rendering page:
 
-After Reject
+if permission exists
+allow
 
-Refresh Notifications.
+else
 
-Inventory must remain unchanged.
+redirect to /unauthorized
 
----------------------------------------------------
+5. Unauthorized page
 
-11.
+Display:
 
-Remove
+"You are not authorized to access this module."
 
-"Unable to locate matching checkout request"
+6. After login
 
-by using CheckOutId instead of NotificationId.
+Reload permissions from localStorage.
 
----------------------------------------------------
+7. After logout
 
-12.
+Clear every authentication item.
 
-Use Bootstrap only.
+8. Employee Edit
 
-Responsive.
+Edit API should send every required field:
 
-Professional UI.
+Name
+Email
+Department
+Shift
+Role
 
-Do not modify Login or Check-In.
+Do not send null values.
+
+9. Access dialog
+
+Load saved permissions.
+
+Save permissions.
+
+Refresh employee list after save.
+
+10. UI
+
+Sidebar must never disappear.
+
+Show loading while permissions are loading.
+
+Show success/error toast messages.
+
+Do not rewrite the project.
+Modify only necessary files.
+
+Finally provide complete updated code for every modified file.
